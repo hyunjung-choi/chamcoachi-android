@@ -1,3 +1,18 @@
+/*
+ * Copyright 2025 ChamCoach
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.hyunjung.chamcoach.ui.component
 
 import android.R.attr.text
@@ -7,7 +22,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,58 +46,57 @@ import com.hyunjung.chamcoach.ui.theme.TamaPurple02
 
 @Composable
 fun SearchResultItem(
-    result: SearchResult,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+  result: SearchResult,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(1.dp)
-            .background(TamaGray02)
-    )
+  Box(
+    modifier = Modifier
+      .fillMaxWidth()
+      .height(1.dp)
+      .background(TamaGray02),
+  )
+  Row(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(12.dp)
+      .clickable { onClick() },
+    horizontalArrangement = Arrangement.SpaceBetween,
+    verticalAlignment = Alignment.CenterVertically,
+  ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-            .clickable { onClick() },
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+      verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "${result.index + 1}단계",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(800),
-                    color = TamaPurple02,
-                )
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            result.item.arrows.forEach { arrow ->
-                Text(
-                    text = arrowSymbol(arrow),
-                    style = TextStyle(
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight(600),
-                        color = TamaGray01
-                    )
-                )
-            }
-
-        }
-
-        Icon(
-            painter = painterResource(R.drawable.ic_arrow),
-            contentDescription = null,
-            tint = Color.Unspecified
+      Text(
+        text = "${result.index + 1}단계",
+        style = TextStyle(
+          fontSize = 16.sp,
+          fontWeight = FontWeight(800),
+          color = TamaPurple02,
+        ),
+      )
+      Spacer(modifier = Modifier.width(4.dp))
+      result.item.arrows.forEach { arrow ->
+        Text(
+          text = arrowSymbol(arrow),
+          style = TextStyle(
+            fontSize = 12.sp,
+            fontWeight = FontWeight(600),
+            color = TamaGray01,
+          ),
         )
+      }
     }
+
+    Icon(
+      painter = painterResource(R.drawable.ic_arrow),
+      contentDescription = null,
+      tint = Color.Unspecified,
+    )
+  }
 }
 
 private fun arrowSymbol(arrow: Arrow): String = when (arrow) {
-    Arrow.LEFT -> "1"
-    Arrow.RIGHT -> "2"
+  Arrow.LEFT -> "1"
+  Arrow.RIGHT -> "2"
 }

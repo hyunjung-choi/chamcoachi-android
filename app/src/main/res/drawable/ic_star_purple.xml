@@ -1,0 +1,26 @@
+<!--
+  Copyright 2025 ChamCoach
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="35dp"
+    android:height="34dp"
+    android:viewportWidth="35"
+    android:viewportHeight="34">
+  <path
+      android:pathData="M14.53,3.43C15.46,0.429 19.539,0.429 20.469,3.43L22.027,8.459C22.444,9.803 23.647,10.713 25.004,10.71L30.081,10.698C33.11,10.691 34.371,14.729 31.916,16.576L27.802,19.673C26.703,20.5 26.243,21.972 26.665,23.314L28.245,28.336C29.187,31.332 25.887,33.828 23.44,31.969L19.339,28.854C18.243,28.021 16.756,28.021 15.66,28.854L11.559,31.969C9.112,33.828 5.812,31.332 6.754,28.336L8.334,23.314C8.756,21.972 8.296,20.5 7.197,19.673L3.083,16.576C0.628,14.729 1.889,10.691 4.918,10.698L9.995,10.71C11.352,10.713 12.555,9.803 12.972,8.459L14.53,3.43Z"
+      android:strokeWidth="2"
+      android:fillColor="#DBBEDA"
+      android:strokeColor="#AA85B6"/>
+</vector>
