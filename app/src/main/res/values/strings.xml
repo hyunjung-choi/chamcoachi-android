@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ChamCoach</string>
+    <string name="search">검색</string>
+    <string name="search_result">검색 결과</string>
+    <string name="bookmark">북마크</string>
+    <string name="step">단계</string>
+    <string name="no_data">No data</string>
+</resources>
