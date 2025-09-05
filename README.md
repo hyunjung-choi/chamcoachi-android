@@ -2,7 +2,6 @@
   <img width = 250px alt="chamcoach" src="https://github.com/user-attachments/assets/4f31fe3e-ecd5-4e3a-b2dc-46bd82698153" />
   </br>
   </br>
-  <h1 align = center>✨💛 참코치 (ChamCoach) 💛✨</h1>
   <h3 align = center><b>다마고치 참참참 게임 도우미</b></h3>
 </p>
 
