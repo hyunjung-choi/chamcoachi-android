@@ -1,6 +1,7 @@
 [versions]
 agp = "8.12.2"
 kotlin = "2.1.10"
+kotlinxSerializationJsonVersion = "1.6.2"
 ksp = "2.1.10-1.0.31"
 kotlinxImmutable = "0.3.7"
 androidxActivity = "1.9.3"
@@ -63,6 +64,7 @@ androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTes
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTestJunit" }
 androidx-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 compose-stable-marker = { group = "com.github.skydoves", name = "compose-stable-marker", version.ref = "composeStableMarker" }
+kotlinx-serialization-json-v162 = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJsonVersion" }
 landscapist-glide = { group = "com.github.skydoves", name = "landscapist-glide", version.ref = "landscapist" }
 landscapist-animation = { group = "com.github.skydoves", name = "landscapist-animation", version.ref = "landscapist" }
 landscapist-placeholder = { group = "com.github.skydoves", name = "landscapist-placeholder", version.ref = "landscapist" }
