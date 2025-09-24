@@ -15,6 +15,7 @@
  */
 package com.hyunjung.chamcoach.ui.player
 
+import BookmarkManagementScreen
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -50,7 +51,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -64,438 +68,394 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.chamcoach.core.designsystem.TamaColors.TamaGray02
+import com.chamcoach.core.designsystem.TamaColors.TamaPink02
 import com.hyunjung.chamcoach.R
 import com.hyunjung.chamcoach.data.Arrow
+import com.hyunjung.chamcoach.data.BookmarkItem
 import com.hyunjung.chamcoach.data.PatternItem
+import com.hyunjung.chamcoach.data.PatternsRepository
+import com.hyunjung.chamcoach.ui.component.AddBookmarkDialog
 import com.hyunjung.chamcoach.ui.component.ChamCoachBottomBar
 import com.hyunjung.chamcoach.ui.component.ChamCoachHeader
 import com.hyunjung.chamcoach.ui.component.PatternDisplayCard
 import com.hyunjung.chamcoach.ui.component.SearchResultItem
 import com.hyunjung.chamcoach.ui.theme.ChamCoachTheme
 import com.hyunjung.chamcoach.ui.theme.TamaGray01
-import com.hyunjung.chamcoach.ui.theme.TamaGray02
-import com.hyunjung.chamcoach.ui.theme.TamaPink02
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PatternPlayerScreen(
-  viewModel: PatternPlayerViewModel,
-  modifier: Modifier = Modifier,
+    viewModel: PatternPlayerViewModel,
+    modifier: Modifier = Modifier,
 ) {
-  val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsState()
 
-  PatternPlayerScreenContent(
-    currentIndex = state.currentIndex,
-    totalItems = state.totalItems,
-    arrows = state.currentItem?.arrows ?: emptyList(),
-    bookmarkedIndex = state.bookmarkedIndex,
-    isAtBookmark = state.isAtBookmark,
-    searchQuery = state.searchQuery,
-    searchResults = state.searchResults,
-    isSearchMode = state.isSearchMode,
-    isBookmarkMode = state.isBookmarkMode,
-    onIndexChange = { viewModel.setIndex(it) },
-    onSaveBookmark = { viewModel.saveBookmark() },
-    onGoToBookmark = { viewModel.goToBookmark() },
-    onToggleSearch = { viewModel.toggleSearchMode() },
-    onToggleBookmark = { viewModel.toggleBookmarkMode() },
-    onSearchQueryChange = { viewModel.updateSearchQuery(it) },
-    onGoToSearchResult = { viewModel.goToSearchResult(it) },
-    modifier = modifier,
-  )
+    var showAddBookmarkDialog by remember { mutableStateOf(false) }
+
+    PatternPlayerScreenContent(
+        currentIndex = state.currentIndex,
+        totalItems = state.totalItems,
+        arrows = state.currentItem?.arrows ?: emptyList(),
+        bookmarks = state.bookmarks,
+        currentStepBookmarks = state.currentStepBookmarks,
+        canAddMoreBookmarks = state.bookmarks.size < state.maxBookmarks,
+
+        // 하위 호환
+        bookmarkedIndex = state.bookmarkedIndex,
+        isAtBookmark = state.isAtBookmark,
+        searchQuery = state.searchQuery,
+        searchResults = state.searchResults,
+        isSearchMode = state.isSearchMode,
+        isBookmarkMode = state.isBookmarkMode,
+
+        onIndexChange = { viewModel.setIndex(it) },
+        onSaveBookmark = { viewModel.saveBookmark() },
+        onGoToBookmark = { viewModel.goToBookmark() },
+
+        // 새로운 다중 북마크 함수들
+        onAddBookmark = { showAddBookmarkDialog = true },
+        onDeleteBookmark = { bookmarkId -> viewModel.deleteBookmark(bookmarkId) },
+        onGoToBookmarkById = { bookmarkId -> viewModel.goToBookmark(bookmarkId) },
+
+        onToggleSearch = { viewModel.toggleSearchMode() },
+        onToggleBookmark = { viewModel.toggleBookmarkMode() },
+        onSearchQueryChange = { viewModel.updateSearchQuery(it) },
+        onGoToSearchResult = { viewModel.goToSearchResult(it) },
+        modifier = modifier,
+    )
+
+    if (showAddBookmarkDialog) {
+        AddBookmarkDialog(
+            currentStep = state.currentIndex,
+            existingBookmarksCount = state.bookmarks.size,
+            onDismiss = { showAddBookmarkDialog = false },
+            onConfirm = { title, color ->
+                viewModel.addBookmark(title, color)
+                showAddBookmarkDialog = false
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PatternPlayerScreenContent(
-  currentIndex: Int,
-  totalItems: Int,
-  arrows: List<Arrow>,
-  bookmarkedIndex: Int,
-  isAtBookmark: Boolean,
-  searchQuery: String,
-  searchResults: List<SearchResult>,
-  isSearchMode: Boolean,
-  isBookmarkMode: Boolean,
-  onIndexChange: (Int) -> Unit,
-  onSaveBookmark: () -> Unit,
-  onGoToBookmark: () -> Unit,
-  onToggleSearch: () -> Unit,
-  onToggleBookmark: () -> Unit,
-  onSearchQueryChange: (String) -> Unit,
-  onGoToSearchResult: (Int) -> Unit,
-  modifier: Modifier = Modifier,
+    currentIndex: Int,
+    totalItems: Int,
+    arrows: List<Arrow>,
+
+    // 다중 북마크 관련
+    bookmarks: List<BookmarkItem>,
+    currentStepBookmarks: List<BookmarkItem>,
+    canAddMoreBookmarks: Boolean,
+
+    bookmarkedIndex: Int,
+    isAtBookmark: Boolean,
+    searchQuery: String,
+    searchResults: List<SearchResult>,
+    isSearchMode: Boolean,
+    isBookmarkMode: Boolean,
+    onIndexChange: (Int) -> Unit,
+    onSaveBookmark: () -> Unit,
+    onGoToBookmark: () -> Unit,
+
+    onAddBookmark: () -> Unit,
+    onDeleteBookmark: (String) -> Unit,
+    onGoToBookmarkById: (String) -> Unit,
+
+    onToggleSearch: () -> Unit,
+    onToggleBookmark: () -> Unit,
+    onSearchQueryChange: (String) -> Unit,
+    onGoToSearchResult: (Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  val keyboardController = LocalSoftwareKeyboardController.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-  val virtualPageCount = if (totalItems > 0) totalItems * 1000 else 1000
-  val startPage = if (totalItems > 0) (virtualPageCount / 2) + currentIndex else 0
+    val virtualPageCount = if (totalItems > 0) totalItems * 1000 else 1000
+    val startPage = if (totalItems > 0) (virtualPageCount / 2) + currentIndex else 0
 
-  val pagerState = rememberPagerState(
-    initialPage = startPage,
-    pageCount = { virtualPageCount },
-  )
-  val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(
+        initialPage = startPage,
+        pageCount = { virtualPageCount },
+    )
+    val coroutineScope = rememberCoroutineScope()
 
-  fun virtualPageToIndex(virtualPage: Int): Int {
-    return if (totalItems > 0) virtualPage % totalItems else 0
-  }
-
-  LaunchedEffect(currentIndex) {
-    val currentVirtualPage = pagerState.currentPage
-    val currentActualIndex = virtualPageToIndex(currentVirtualPage)
-
-    if (currentActualIndex != currentIndex) {
-      val targetVirtualPage = currentVirtualPage + (currentIndex - currentActualIndex)
-      pagerState.animateScrollToPage(targetVirtualPage)
+    fun virtualPageToIndex(virtualPage: Int): Int {
+        return if (totalItems > 0) virtualPage % totalItems else 0
     }
-  }
 
-  LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
-    if (!pagerState.isScrollInProgress) {
-      val actualIndex = virtualPageToIndex(pagerState.currentPage)
-      if (actualIndex != currentIndex) {
-        onIndexChange(actualIndex)
-      }
+    LaunchedEffect(currentIndex) {
+        val currentVirtualPage = pagerState.currentPage
+        val currentActualIndex = virtualPageToIndex(currentVirtualPage)
+
+        if (currentActualIndex != currentIndex) {
+            val targetVirtualPage = currentVirtualPage + (currentIndex - currentActualIndex)
+            pagerState.animateScrollToPage(targetVirtualPage)
+        }
     }
-  }
 
-  Column(
-    modifier = Modifier.fillMaxWidth(),
-  ) {
-    ChamCoachHeader()
+    LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
+        if (!pagerState.isScrollInProgress) {
+            val actualIndex = virtualPageToIndex(pagerState.currentPage)
+            if (actualIndex != currentIndex) {
+                onIndexChange(actualIndex)
+            }
+        }
+    }
 
     Column(
-      modifier = modifier
-        .fillMaxSize(),
-      horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth(),
     ) {
-      // Header Section with Search Toggle
-      Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(horizontal = 36.dp),
-      ) {
-        Spacer(modifier = Modifier.height(8.dp))
+        ChamCoachHeader()
 
-        // Search Bar (when search mode is active)
-        if (isSearchMode) {
-          OutlinedTextField(
-            value = searchQuery,
-            onValueChange = onSearchQueryChange,
-            placeholder = { Text("패턴 검색 (예: 221, 121...)") },
-            leadingIcon = {
-              Icon(Icons.Default.Search, contentDescription = "검색")
-            },
-            trailingIcon = {
-              if (searchQuery.isNotEmpty()) {
-                IconButton(onClick = { onSearchQueryChange("") }) {
-                  Icon(Icons.Default.Close, contentDescription = "지우기")
-                }
-              }
-            },
-            keyboardOptions = KeyboardOptions(
-              keyboardType = KeyboardType.Number,
-              imeAction = ImeAction.Search,
-            ),
-            keyboardActions = KeyboardActions(
-              onSearch = { keyboardController?.hide() },
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-          )
-          Spacer(modifier = Modifier.height(12.dp))
-        }
-
-        // Bookmark UI (when bookmark mode is active)
-        if (isBookmarkMode) {
-          Column(
-            modifier = Modifier
-              .padding(16.dp),
-          ) {
-            Image(
-              painter = painterResource(R.drawable.img_bookmark_title),
-              contentDescription = null,
-              modifier = Modifier
-                .width(140.dp)
-                .padding(bottom = 16.dp),
-            )
-
-            Box(
-              modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(TamaGray02),
-            )
-
-            Surface(
-              modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .clickable {
-                  onIndexChange(bookmarkedIndex)
-                  onToggleBookmark() // Close bookmark mode
-                },
-            ) {
-              Row(
-                modifier = Modifier
-                  .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-              ) {
-                Icon(
-                  painter = painterResource(R.drawable.ic_star_pink),
-                  contentDescription = null,
-                  tint = Color.Unspecified,
-                )
-                Spacer(
-                  modifier = Modifier.width(16.dp),
-                )
-                Text(
-                  text = "${bookmarkedIndex + 1}단계",
-                  style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = TamaPink02,
-                  ),
-                )
-                Spacer(
-                  modifier = Modifier.weight(1f),
-                )
-                Icon(
-                  painter = painterResource(R.drawable.ic_arrow_pink_right),
-                  contentDescription = null,
-                  tint = Color.Unspecified,
-                )
-              }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Second bookmark item (example)
-            Surface(
-              shape = RoundedCornerShape(12.dp),
-              color = Color(0xFFB8E6FF),
-              modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp)
-                .clickable {
-                  onIndexChange(2) // Go to step 3 (index 2)
-                  onToggleBookmark() // Close bookmark mode
-                },
-            ) {
-              Column(
-                modifier = Modifier.padding(16.dp),
-              ) {
-                Text(
-                  text = "3단계",
-                  style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF2980B9),
-                  ),
-                )
-              }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Third bookmark item (No data example)
-            Surface(
-              shape = RoundedCornerShape(12.dp),
-              color = Color(0xFFE8D5FF),
-              modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            ) {
-              Column(
-                modifier = Modifier.padding(16.dp),
-              ) {
-                Text(
-                  text = "No data",
-                  style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF9B59B6),
-                  ),
-                )
-              }
-            }
-          }
-        }
-      }
-
-      // Main Content Area
-      if (isSearchMode) {
         Column(
-          modifier = Modifier
-            .weight(1f)
-            .padding(horizontal = 36.dp),
+            modifier = modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-          Text(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            text = if (searchResults.isNotEmpty()) "검색 결과 (${searchResults.size}개)" else "",
-            style = TextStyle(
-              fontSize = 12.sp,
-              fontWeight = FontWeight(500),
-              color = TamaGray01,
-              textAlign = TextAlign.Center,
-            ),
-          )
-
-          Spacer(modifier = Modifier.height(8.dp))
-
-          if (searchResults.isEmpty()) {
-            Text(
-              text = "일치하는 패턴이 없습니다.",
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-              modifier = Modifier.padding(16.dp),
-            )
-          } else {
-            LazyColumn(
-              contentPadding = PaddingValues(vertical = 4.dp),
-              verticalArrangement = Arrangement.spacedBy(8.dp),
+            // Header Section with Search Toggle
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-              items(searchResults) { result ->
-                SearchResultItem(
-                  result = result,
-                  onClick = { onGoToSearchResult(result.index) },
-                )
-              }
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Search Bar (when search mode is active)
+                if (isSearchMode) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = onSearchQueryChange,
+                        placeholder = { Text("패턴 검색 (예: 221, 121...)") },
+                        leadingIcon = {
+                            Icon(Icons.Default.Search, contentDescription = "검색")
+                        },
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { onSearchQueryChange("") }) {
+                                    Icon(Icons.Default.Close, contentDescription = "지우기")
+                                }
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Search,
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onSearch = { keyboardController?.hide() },
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+
+                // Bookmark UI (when bookmark mode is active)
+                if (isBookmarkMode) {
+                    BookmarkManagementScreen(
+                        bookmarks = bookmarks,
+                        canAddMore = canAddMoreBookmarks,
+                        onAddBookmark = onAddBookmark,
+                        onBookmarkClick = { bookmark -> onGoToBookmarkById(bookmark.id) },
+                        onDeleteBookmark = { bookmark -> onDeleteBookmark(bookmark.id) },
+                        onToggleBookmark = onToggleBookmark
+                        )
+                }
             }
-          }
+
+            // Main Content Area
+            if (isSearchMode) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 36.dp),
+                ) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        text = if (searchResults.isNotEmpty()) "검색 결과 (${searchResults.size}개)" else "",
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight(500),
+                            color = TamaGray01,
+                            textAlign = TextAlign.Center,
+                        ),
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    if (searchResults.isEmpty()) {
+                        Text(
+                            text = "일치하는 패턴이 없습니다.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            modifier = Modifier.padding(16.dp),
+                        )
+                    } else {
+                        LazyColumn(
+                            contentPadding = PaddingValues(vertical = 4.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            items(searchResults) { result ->
+                                SearchResultItem(
+                                    result = result,
+                                    onClick = { onGoToSearchResult(result.index) },
+                                )
+                            }
+                        }
+                    }
+                }
+            } else if (isBookmarkMode) {
+                Spacer(modifier = Modifier.weight(1f))
+            } else {
+                // HorizontalPager for smooth swipe navigation
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = 36.dp),
+                    contentPadding = PaddingValues(horizontal = 0.dp),
+                ) { virtualPageIndex ->
+                    val actualIndex = virtualPageToIndex(virtualPageIndex)
+                    val pageArrows = if (actualIndex < totalItems) {
+                        PatternsRepository.tamagotchiArrowSet.items.getOrNull(actualIndex)?.arrows
+                            ?: emptyList()
+                    } else {
+                        emptyList()
+                    }
+
+                    PatternDisplayCard(
+                        arrows = pageArrows,
+                        currentStepBookmarks = if (actualIndex == currentIndex) currentStepBookmarks else emptyList(),
+                        canAddMoreBookmarks = canAddMoreBookmarks,
+                        onSaveBookmark = onSaveBookmark, // 하위 호환
+                        onAddBookmark = onAddBookmark
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ChamCoachBottomBar(
+                onToggleSearch = onToggleSearch,
+                onToggleBookmark = onToggleBookmark,
+                onGoToBookmark = onGoToBookmark,
+                isSearchMode = isSearchMode,
+                isBookmarkMode = isBookmarkMode,
+                isAtBookmark = isAtBookmark,
+                currentIndex = currentIndex,
+            )
         }
-      } else if (isBookmarkMode) {
-        // Bookmark mode content is handled above
-        Spacer(modifier = Modifier.weight(1f))
-      } else {
-        // HorizontalPager for smooth swipe navigation
-        HorizontalPager(
-          state = pagerState,
-          modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)
-            .padding(horizontal = 36.dp),
-          contentPadding = PaddingValues(horizontal = 0.dp),
-        ) { virtualPageIndex ->
-          val actualIndex = virtualPageToIndex(virtualPageIndex)
-          val pageArrows = if (actualIndex < totalItems) {
-            com.hyunjung.chamcoach.data.PatternsRepository.tamagotchiArrowSet.items.getOrNull(
-              actualIndex,
-            )?.arrows ?: emptyList()
-          } else {
-            emptyList()
-          }
-
-          PatternDisplayCard(
-            onSaveBookmark = onSaveBookmark,
-            isAtBookmark = isAtBookmark,
-//                        stepNumber = actualIndex + 1,
-            arrows = pageArrows,
-          )
-        }
-      }
-
-      Spacer(modifier = Modifier.height(16.dp))
-
-      ChamCoachBottomBar(
-        onToggleSearch = onToggleSearch,
-        onToggleBookmark = onToggleBookmark,
-        onGoToBookmark = onGoToBookmark,
-        isSearchMode = isSearchMode,
-        isBookmarkMode = isBookmarkMode,
-        isAtBookmark = isAtBookmark,
-        currentIndex = currentIndex,
-      )
     }
-  }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun PatternPlayerScreenPreview() {
-  ChamCoachTheme {
-    PatternPlayerScreenContent(
-      currentIndex = 2,
-      totalItems = 18,
-      arrows = listOf(Arrow.RIGHT, Arrow.RIGHT, Arrow.LEFT, Arrow.LEFT, Arrow.RIGHT),
-      bookmarkedIndex = 4,
-      isAtBookmark = false,
-      searchQuery = "",
-      searchResults = emptyList(),
-      isSearchMode = false,
-      isBookmarkMode = false,
-      onIndexChange = {},
-      onSaveBookmark = {},
-      onGoToBookmark = {},
-      onToggleSearch = {},
-      onToggleBookmark = {},
-      onSearchQueryChange = {},
-      onGoToSearchResult = {},
-    )
-  }
+    ChamCoachTheme {
+        PatternPlayerScreenContent(
+            currentIndex = 2,
+            totalItems = 18,
+            arrows = listOf(Arrow.RIGHT, Arrow.RIGHT, Arrow.LEFT, Arrow.LEFT, Arrow.RIGHT),
+            bookmarkedIndex = 4,
+            isAtBookmark = false,
+            searchQuery = "",
+            searchResults = emptyList(),
+            isSearchMode = false,
+            isBookmarkMode = false,
+            onIndexChange = {},
+            onSaveBookmark = {},
+            onGoToBookmark = {},
+            onToggleSearch = {},
+            onToggleBookmark = {},
+            onSearchQueryChange = {},
+            onGoToSearchResult = {},
+            bookmarks = TODO(),
+            currentStepBookmarks = TODO(),
+            canAddMoreBookmarks = TODO(),
+            onAddBookmark = TODO(),
+            onDeleteBookmark = TODO(),
+            onGoToBookmarkById = TODO(),
+            modifier = TODO(),
+        )
+    }
 }
 
 @Preview(showBackground = true, name = "Search Mode")
 @Composable
 private fun PatternPlayerScreenSearchPreview() {
-  ChamCoachTheme {
-    PatternPlayerScreenContent(
-      currentIndex = 2,
-      totalItems = 18,
-      arrows = listOf(Arrow.RIGHT, Arrow.RIGHT, Arrow.LEFT, Arrow.LEFT, Arrow.RIGHT),
-      bookmarkedIndex = 4,
-      isAtBookmark = false,
-      searchQuery = "221",
-      searchResults = listOf(
-        SearchResult(
-          0,
-          PatternItem(
-            1,
-            listOf(Arrow.RIGHT, Arrow.RIGHT, Arrow.RIGHT, Arrow.LEFT, Arrow.LEFT),
-          ),
-        ),
-        SearchResult(
-          2,
-          PatternItem(
-            3,
-            listOf(Arrow.RIGHT, Arrow.RIGHT, Arrow.LEFT, Arrow.LEFT, Arrow.RIGHT),
-          ),
-        ),
-      ),
-      isSearchMode = true,
-      isBookmarkMode = false,
-      onIndexChange = {},
-      onSaveBookmark = {},
-      onGoToBookmark = {},
-      onToggleSearch = {},
-      onToggleBookmark = {},
-      onSearchQueryChange = {},
-      onGoToSearchResult = {},
-    )
-  }
+    ChamCoachTheme {
+        PatternPlayerScreenContent(
+            currentIndex = 2,
+            totalItems = 18,
+            arrows = listOf(Arrow.RIGHT, Arrow.RIGHT, Arrow.LEFT, Arrow.LEFT, Arrow.RIGHT),
+            bookmarkedIndex = 4,
+            isAtBookmark = false,
+            searchQuery = "221",
+            searchResults = listOf(
+                SearchResult(
+                    0,
+                    PatternItem(
+                        1,
+                        listOf(Arrow.RIGHT, Arrow.RIGHT, Arrow.RIGHT, Arrow.LEFT, Arrow.LEFT),
+                    ),
+                ),
+                SearchResult(
+                    2,
+                    PatternItem(
+                        3,
+                        listOf(Arrow.RIGHT, Arrow.RIGHT, Arrow.LEFT, Arrow.LEFT, Arrow.RIGHT),
+                    ),
+                ),
+            ),
+            isSearchMode = true,
+            isBookmarkMode = false,
+            onIndexChange = {},
+            onSaveBookmark = {},
+            onGoToBookmark = {},
+            onToggleSearch = {},
+            onToggleBookmark = {},
+            onSearchQueryChange = {},
+            onGoToSearchResult = {},
+            bookmarks = TODO(),
+            currentStepBookmarks = TODO(),
+            canAddMoreBookmarks = TODO(),
+            onAddBookmark = TODO(),
+            onDeleteBookmark = TODO(),
+            onGoToBookmarkById = TODO(),
+            modifier = TODO(),
+        )
+    }
 }
 
 @Preview(showBackground = true, name = "Bookmark Mode")
 @Composable
 private fun PatternPlayerScreenBookmarkPreview() {
-  ChamCoachTheme {
-    PatternPlayerScreenContent(
-      currentIndex = 2,
-      totalItems = 18,
-      arrows = listOf(Arrow.RIGHT, Arrow.RIGHT, Arrow.LEFT, Arrow.LEFT, Arrow.RIGHT),
-      bookmarkedIndex = 15,
-      isAtBookmark = false,
-      searchQuery = "",
-      searchResults = emptyList(),
-      isSearchMode = false,
-      isBookmarkMode = true,
-      onIndexChange = {},
-      onSaveBookmark = {},
-      onGoToBookmark = {},
-      onToggleSearch = {},
-      onToggleBookmark = {},
-      onSearchQueryChange = {},
-      onGoToSearchResult = {},
-    )
-  }
+    ChamCoachTheme {
+        PatternPlayerScreenContent(
+            currentIndex = 2,
+            totalItems = 18,
+            arrows = listOf(Arrow.RIGHT, Arrow.RIGHT, Arrow.LEFT, Arrow.LEFT, Arrow.RIGHT),
+            bookmarkedIndex = 15,
+            isAtBookmark = false,
+            searchQuery = "",
+            searchResults = emptyList(),
+            isSearchMode = false,
+            isBookmarkMode = true,
+            onIndexChange = {},
+            onSaveBookmark = {},
+            onGoToBookmark = {},
+            onToggleSearch = {},
+            onToggleBookmark = {},
+            onSearchQueryChange = {},
+            onGoToSearchResult = {},
+            bookmarks = TODO(),
+            currentStepBookmarks = TODO(),
+            canAddMoreBookmarks = TODO(),
+            onAddBookmark = TODO(),
+            onDeleteBookmark = TODO(),
+            onGoToBookmarkById = TODO(),
+            modifier = TODO(),
+        )
+    }
 }

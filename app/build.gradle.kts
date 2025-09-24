@@ -67,6 +67,7 @@ dependencies {
     // di
     implementation(libs.hilt.android)
     implementation(libs.androidx.ui.tooling)
+    implementation(libs.androidx.compose.ui.graphics)
     ksp(libs.hilt.compiler)
     androidTestImplementation(libs.hilt.testing)
     kspAndroidTest(libs.hilt.compiler)
