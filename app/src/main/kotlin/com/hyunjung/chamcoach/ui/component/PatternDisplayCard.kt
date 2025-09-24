@@ -23,8 +23,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.chamcoach.core.designsystem.TamaColors.TamaBlue02
+import com.chamcoach.core.designsystem.TamaColors.TamaPink02
+import com.chamcoach.core.designsystem.TamaColors.TamaPurple02
 import com.hyunjung.chamcoach.R
 import com.hyunjung.chamcoach.data.Arrow
+import com.hyunjung.chamcoach.data.BookmarkColor
 import com.hyunjung.chamcoach.data.BookmarkItem
 import com.hyunjung.chamcoach.ui.theme.ChamCoachTheme
 import com.hyunjung.chamcoach.ui.theme.TamaGray01
@@ -44,7 +48,6 @@ fun PatternDisplayCard(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        // 북마크 버튼 영역
         BookmarkButtonArea(
             currentStepBookmarks = currentStepBookmarks,
             canAddMoreBookmarks = canAddMoreBookmarks,
@@ -89,7 +92,7 @@ private fun BookmarkButtonArea(
                     painter = if (canAddMoreBookmarks) {
                         painterResource(R.drawable.ic_bookmark)
                     } else {
-                        painterResource(R.drawable.ic_bookmark) // 동일한 아이콘 사용
+                        painterResource(R.drawable.ic_bookmark)
                     },
                     contentDescription = if (canAddMoreBookmarks) "북마크 추가" else "북마크 저장",
                     tint = Color.Unspecified,
@@ -130,42 +133,40 @@ private fun BookmarkedStepDisplay(
                 color = TamaGray01
             )
 
-            // 색상 인디케이터들
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 bookmarks.forEach { bookmark ->
                     Box(
                         modifier = Modifier
-                          .size(12.dp)
-                          .clip(CircleShape)
-                          .background(Color.Unspecified)
+                            .size(12.dp)
+                            .clip(CircleShape)
+                            .background(bookmark.color.toComposeColor())
                     )
                 }
             }
         }
 
-        // 북마크 제목들 (최대 2개까지만 표시)
         if (bookmarks.isNotEmpty()) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            val displayBookmarks = bookmarks.take(2)
+            val displayBookmarks = bookmarks.take(1)
             displayBookmarks.forEach { bookmark ->
-                Text(
-                    text = bookmark.title,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = TamaGray01
-                )
-            }
-
-            if (bookmarks.size > 2) {
-                Text(
-                    text = "외 ${bookmarks.size - 2}개",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = TamaGray01
-                )
+                if (bookmarks.size > 1) {
+                    Text(
+                        text = "${bookmark.title} 외 ${bookmarks.size - 1}개",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = TamaGray01
+                    )
+                } else {
+                    Text(
+                        text = bookmark.title,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = TamaGray01
+                    )
+                }
             }
         }
     }
@@ -222,11 +223,24 @@ private fun ArrowListIcon(arrows: List<Arrow>) {
     }
 }
 
+@Composable
+private fun BookmarkColor.toComposeColor(): Color {
+    return when (this) {
+        BookmarkColor.PINK -> TamaPink02
+        BookmarkColor.BLUE -> TamaBlue02
+        BookmarkColor.PURPLE -> TamaPurple02
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun PatternDisplayCardPreview() {
     ChamCoachTheme {
         PatternDisplayCard(
+            currentStepBookmarks = listOf(
+                BookmarkItem("0", 0, "집 다마고치"),
+                BookmarkItem("1", 1, "회사 다마고치")
+            ),
             arrows = listOf(
                 // 1
                 Arrow.LEFT,

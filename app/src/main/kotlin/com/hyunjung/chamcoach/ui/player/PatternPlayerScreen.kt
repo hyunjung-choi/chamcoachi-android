@@ -101,7 +101,6 @@ fun PatternPlayerScreen(
         currentStepBookmarks = state.currentStepBookmarks,
         canAddMoreBookmarks = state.bookmarks.size < state.maxBookmarks,
 
-        // 하위 호환
         bookmarkedIndex = state.bookmarkedIndex,
         isAtBookmark = state.isAtBookmark,
         searchQuery = state.searchQuery,
@@ -113,7 +112,6 @@ fun PatternPlayerScreen(
         onSaveBookmark = { viewModel.saveBookmark() },
         onGoToBookmark = { viewModel.goToBookmark() },
 
-        // 새로운 다중 북마크 함수들
         onAddBookmark = { showAddBookmarkDialog = true },
         onDeleteBookmark = { bookmarkId -> viewModel.deleteBookmark(bookmarkId) },
         onGoToBookmarkById = { bookmarkId -> viewModel.goToBookmark(bookmarkId) },
@@ -145,7 +143,6 @@ private fun PatternPlayerScreenContent(
     totalItems: Int,
     arrows: List<Arrow>,
 
-    // 다중 북마크 관련
     bookmarks: List<BookmarkItem>,
     currentStepBookmarks: List<BookmarkItem>,
     canAddMoreBookmarks: Boolean,
