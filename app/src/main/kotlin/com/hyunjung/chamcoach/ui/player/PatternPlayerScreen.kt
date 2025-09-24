@@ -325,7 +325,7 @@ private fun PatternPlayerScreenContent(
                         arrows = pageArrows,
                         currentStepBookmarks = if (actualIndex == currentIndex) currentStepBookmarks else emptyList(),
                         canAddMoreBookmarks = canAddMoreBookmarks,
-                        onSaveBookmark = onSaveBookmark, // 하위 호환
+                        onSaveBookmark = onSaveBookmark,
                         onAddBookmark = onAddBookmark
                     )
                 }

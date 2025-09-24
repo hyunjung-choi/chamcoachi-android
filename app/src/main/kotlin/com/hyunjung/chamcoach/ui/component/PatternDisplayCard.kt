@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -55,8 +56,6 @@ fun PatternDisplayCard(
             onAddBookmark = onAddBookmark
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         ArrowListIcon(arrows)
     }
 }
@@ -74,16 +73,14 @@ private fun BookmarkButtonArea(
         contentAlignment = Alignment.Center
     ) {
         if (currentStepBookmarks.isNotEmpty()) {
-            // 이미 북마크된 단계 - 색상 표시
             BookmarkedStepDisplay(bookmarks = currentStepBookmarks)
         } else {
-            // 북마크되지 않은 단계 - 추가 버튼
             CustomIconButton(
                 onClick = {
                     if (canAddMoreBookmarks) {
                         onAddBookmark()
                     } else {
-                        onSaveBookmark() // 하위 호환
+                        onSaveBookmark()
                     }
                 },
                 size = 240.dp,
@@ -107,65 +104,61 @@ private fun BookmarkedStepDisplay(
     bookmarks: List<BookmarkItem>,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier.size(240.dp)
     ) {
-        // 완료 아이콘
-        Icon(
-            painter = painterResource(R.drawable.ic_done),
-            contentDescription = "북마크됨",
-            tint = Color.Unspecified,
-            modifier = Modifier.size(120.dp)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // 북마크 개수 및 색상 표시
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = "${bookmarks.size}개 북마크",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                color = TamaGray01
+            Icon(
+                painter = painterResource(R.drawable.ic_done),
+                contentDescription = "북마크됨",
+                tint = Color.Unspecified,
             )
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                bookmarks.forEach { bookmark ->
-                    Box(
-                        modifier = Modifier
-                            .size(12.dp)
-                            .clip(CircleShape)
-                            .background(bookmark.color.toComposeColor())
-                    )
-                }
-            }
-        }
-
-        if (bookmarks.isNotEmpty()) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            val displayBookmarks = bookmarks.take(1)
-            displayBookmarks.forEach { bookmark ->
-                if (bookmarks.size > 1) {
-                    Text(
-                        text = "${bookmark.title} 외 ${bookmarks.size - 1}개",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = TamaGray01
-                    )
-                } else {
-                    Text(
-                        text = bookmark.title,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = TamaGray01
-                    )
+            Row(
+
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                if (bookmarks.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    val displayBookmarks = bookmarks.take(1)
+                    displayBookmarks.forEach { bookmark ->
+                        if (bookmarks.size > 1) {
+                            Text(
+                                text = "${bookmark.title} 외 ${bookmarks.size - 1}개",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = TamaGray01
+                            )
+                        } else {
+                            Text(
+                                text = bookmark.title,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = TamaGray01
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    bookmarks.forEach { bookmark ->
+                        Box(
+                            modifier = Modifier
+                                .size(12.dp)
+                                .clip(CircleShape)
+                                .background(bookmark.color.toComposeColor())
+                        )
+                    }
                 }
             }
         }
@@ -208,6 +201,8 @@ private fun ArrowListIcon(arrows: List<Arrow>) {
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = when (arrow) {
