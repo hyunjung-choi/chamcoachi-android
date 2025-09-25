@@ -1,41 +1,19 @@
-/*
- * Copyright 2025 ChamCoach
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.hyunjung.chamcoach.ui.player
 
 import BookmarkManagementScreen
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -45,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,9 +34,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -68,9 +43,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.chamcoach.core.designsystem.TamaColors.TamaGray02
-import com.chamcoach.core.designsystem.TamaColors.TamaPink02
-import com.hyunjung.chamcoach.R
 import com.hyunjung.chamcoach.data.Arrow
 import com.hyunjung.chamcoach.data.BookmarkItem
 import com.hyunjung.chamcoach.data.PatternItem
@@ -92,6 +64,7 @@ fun PatternPlayerScreen(
     val state by viewModel.uiState.collectAsState()
 
     var showAddBookmarkDialog by remember { mutableStateOf(false) }
+    var pendingBookmarkStepIndex by remember { mutableStateOf(-1) }
 
     PatternPlayerScreenContent(
         currentIndex = state.currentIndex,
@@ -100,22 +73,24 @@ fun PatternPlayerScreen(
         bookmarks = state.bookmarks,
         currentStepBookmarks = state.currentStepBookmarks,
         canAddMoreBookmarks = state.bookmarks.size < state.maxBookmarks,
-
         bookmarkedIndex = state.bookmarkedIndex,
         isAtBookmark = state.isAtBookmark,
         searchQuery = state.searchQuery,
         searchResults = state.searchResults,
         isSearchMode = state.isSearchMode,
         isBookmarkMode = state.isBookmarkMode,
-
         onIndexChange = { viewModel.setIndex(it) },
-        onSaveBookmark = { viewModel.saveBookmark() },
+        onSaveBookmark = {
+            pendingBookmarkStepIndex = state.currentIndex
+            showAddBookmarkDialog = true
+        },
         onGoToBookmark = { viewModel.goToBookmark() },
-
-        onAddBookmark = { showAddBookmarkDialog = true },
+        onAddBookmark = { stepIndex ->
+            pendingBookmarkStepIndex = stepIndex
+            showAddBookmarkDialog = true
+        },
         onDeleteBookmark = { bookmarkId -> viewModel.deleteBookmark(bookmarkId) },
         onGoToBookmarkById = { bookmarkId -> viewModel.goToBookmark(bookmarkId) },
-
         onToggleSearch = { viewModel.toggleSearchMode() },
         onToggleBookmark = { viewModel.toggleBookmarkMode() },
         onSearchQueryChange = { viewModel.updateSearchQuery(it) },
@@ -123,14 +98,19 @@ fun PatternPlayerScreen(
         modifier = modifier,
     )
 
-    if (showAddBookmarkDialog) {
+    if (showAddBookmarkDialog && pendingBookmarkStepIndex >= 0) {
         AddBookmarkDialog(
-            currentStep = state.currentIndex,
+            currentStep = pendingBookmarkStepIndex,
             existingBookmarksCount = state.bookmarks.size,
-            onDismiss = { showAddBookmarkDialog = false },
+            onDismiss = {
+                showAddBookmarkDialog = false
+                pendingBookmarkStepIndex = -1
+            },
             onConfirm = { title, color ->
+                viewModel.setIndex(pendingBookmarkStepIndex)
                 viewModel.addBookmark(title, color)
                 showAddBookmarkDialog = false
+                pendingBookmarkStepIndex = -1
             }
         )
     }
@@ -142,11 +122,9 @@ private fun PatternPlayerScreenContent(
     currentIndex: Int,
     totalItems: Int,
     arrows: List<Arrow>,
-
     bookmarks: List<BookmarkItem>,
     currentStepBookmarks: List<BookmarkItem>,
     canAddMoreBookmarks: Boolean,
-
     bookmarkedIndex: Int,
     isAtBookmark: Boolean,
     searchQuery: String,
@@ -156,11 +134,9 @@ private fun PatternPlayerScreenContent(
     onIndexChange: (Int) -> Unit,
     onSaveBookmark: () -> Unit,
     onGoToBookmark: () -> Unit,
-
-    onAddBookmark: () -> Unit,
+    onAddBookmark: (Int) -> Unit,
     onDeleteBookmark: (String) -> Unit,
     onGoToBookmarkById: (String) -> Unit,
-
     onToggleSearch: () -> Unit,
     onToggleBookmark: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
@@ -252,11 +228,11 @@ private fun PatternPlayerScreenContent(
                     BookmarkManagementScreen(
                         bookmarks = bookmarks,
                         canAddMore = canAddMoreBookmarks,
-                        onAddBookmark = onAddBookmark,
+                        onAddBookmark = { onAddBookmark(currentIndex) },
                         onBookmarkClick = { bookmark -> onGoToBookmarkById(bookmark.id) },
                         onDeleteBookmark = { bookmark -> onDeleteBookmark(bookmark.id) },
                         onToggleBookmark = onToggleBookmark
-                        )
+                    )
                 }
             }
 
@@ -326,7 +302,7 @@ private fun PatternPlayerScreenContent(
                         currentStepBookmarks = if (actualIndex == currentIndex) currentStepBookmarks else emptyList(),
                         canAddMoreBookmarks = canAddMoreBookmarks,
                         onSaveBookmark = onSaveBookmark,
-                        onAddBookmark = onAddBookmark
+                        onAddBookmark = { onAddBookmark(actualIndex) }
                     )
                 }
             }
@@ -367,13 +343,13 @@ private fun PatternPlayerScreenPreview() {
             onToggleBookmark = {},
             onSearchQueryChange = {},
             onGoToSearchResult = {},
-            bookmarks = TODO(),
-            currentStepBookmarks = TODO(),
-            canAddMoreBookmarks = TODO(),
-            onAddBookmark = TODO(),
-            onDeleteBookmark = TODO(),
-            onGoToBookmarkById = TODO(),
-            modifier = TODO(),
+            bookmarks = listOf(),
+            currentStepBookmarks = listOf(),
+            canAddMoreBookmarks = true,
+            onAddBookmark = {},
+            onDeleteBookmark = {},
+            onGoToBookmarkById = {},
+            modifier = Modifier,
         )
     }
 }
@@ -414,13 +390,13 @@ private fun PatternPlayerScreenSearchPreview() {
             onToggleBookmark = {},
             onSearchQueryChange = {},
             onGoToSearchResult = {},
-            bookmarks = TODO(),
-            currentStepBookmarks = TODO(),
-            canAddMoreBookmarks = TODO(),
-            onAddBookmark = TODO(),
-            onDeleteBookmark = TODO(),
-            onGoToBookmarkById = TODO(),
-            modifier = TODO(),
+            bookmarks = listOf(),
+            currentStepBookmarks = listOf(),
+            canAddMoreBookmarks = true,
+            onAddBookmark = {},
+            onDeleteBookmark = {},
+            onGoToBookmarkById = {},
+            modifier = Modifier,
         )
     }
 }
@@ -446,13 +422,13 @@ private fun PatternPlayerScreenBookmarkPreview() {
             onToggleBookmark = {},
             onSearchQueryChange = {},
             onGoToSearchResult = {},
-            bookmarks = TODO(),
-            currentStepBookmarks = TODO(),
-            canAddMoreBookmarks = TODO(),
-            onAddBookmark = TODO(),
-            onDeleteBookmark = TODO(),
-            onGoToBookmarkById = TODO(),
-            modifier = TODO(),
+            bookmarks = listOf(),
+            currentStepBookmarks = listOf(),
+            canAddMoreBookmarks = true,
+            onAddBookmark = {},
+            onDeleteBookmark = {},
+            onGoToBookmarkById = {},
+            modifier = Modifier,
         )
     }
 }
