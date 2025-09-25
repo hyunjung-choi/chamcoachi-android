@@ -15,26 +15,20 @@
  */
 package com.hyunjung.chamcoach.ui.player
 
+import BookmarkManagementScreen
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -44,18 +38,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -64,17 +58,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hyunjung.chamcoach.R
 import com.hyunjung.chamcoach.data.Arrow
+import com.hyunjung.chamcoach.data.BookmarkItem
 import com.hyunjung.chamcoach.data.PatternItem
+import com.hyunjung.chamcoach.data.PatternsRepository
+import com.hyunjung.chamcoach.ui.component.AddBookmarkDialog
 import com.hyunjung.chamcoach.ui.component.ChamCoachBottomBar
 import com.hyunjung.chamcoach.ui.component.ChamCoachHeader
 import com.hyunjung.chamcoach.ui.component.PatternDisplayCard
 import com.hyunjung.chamcoach.ui.component.SearchResultItem
 import com.hyunjung.chamcoach.ui.theme.ChamCoachTheme
 import com.hyunjung.chamcoach.ui.theme.TamaGray01
-import com.hyunjung.chamcoach.ui.theme.TamaGray02
-import com.hyunjung.chamcoach.ui.theme.TamaPink02
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -84,10 +78,16 @@ fun PatternPlayerScreen(
 ) {
   val state by viewModel.uiState.collectAsState()
 
+  var showAddBookmarkDialog by remember { mutableStateOf(false) }
+  var pendingBookmarkStepIndex by remember { mutableStateOf(-1) }
+
   PatternPlayerScreenContent(
     currentIndex = state.currentIndex,
     totalItems = state.totalItems,
     arrows = state.currentItem?.arrows ?: emptyList(),
+    bookmarks = state.bookmarks,
+    currentStepBookmarks = state.currentStepBookmarks,
+    canAddMoreBookmarks = state.bookmarks.size < state.maxBookmarks,
     bookmarkedIndex = state.bookmarkedIndex,
     isAtBookmark = state.isAtBookmark,
     searchQuery = state.searchQuery,
@@ -95,14 +95,40 @@ fun PatternPlayerScreen(
     isSearchMode = state.isSearchMode,
     isBookmarkMode = state.isBookmarkMode,
     onIndexChange = { viewModel.setIndex(it) },
-    onSaveBookmark = { viewModel.saveBookmark() },
+    onSaveBookmark = {
+      pendingBookmarkStepIndex = state.currentIndex
+      showAddBookmarkDialog = true
+    },
     onGoToBookmark = { viewModel.goToBookmark() },
+    onAddBookmark = { stepIndex ->
+      pendingBookmarkStepIndex = stepIndex
+      showAddBookmarkDialog = true
+    },
+    onDeleteBookmark = { bookmarkId -> viewModel.deleteBookmark(bookmarkId) },
+    onGoToBookmarkById = { bookmarkId -> viewModel.goToBookmark(bookmarkId) },
     onToggleSearch = { viewModel.toggleSearchMode() },
     onToggleBookmark = { viewModel.toggleBookmarkMode() },
     onSearchQueryChange = { viewModel.updateSearchQuery(it) },
     onGoToSearchResult = { viewModel.goToSearchResult(it) },
     modifier = modifier,
   )
+
+  if (showAddBookmarkDialog && pendingBookmarkStepIndex >= 0) {
+    AddBookmarkDialog(
+      currentStep = pendingBookmarkStepIndex,
+      existingBookmarksCount = state.bookmarks.size,
+      onDismiss = {
+        showAddBookmarkDialog = false
+        pendingBookmarkStepIndex = -1
+      },
+      onConfirm = { title, color ->
+        viewModel.setIndex(pendingBookmarkStepIndex)
+        viewModel.addBookmark(title, color)
+        showAddBookmarkDialog = false
+        pendingBookmarkStepIndex = -1
+      },
+    )
+  }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -111,6 +137,9 @@ private fun PatternPlayerScreenContent(
   currentIndex: Int,
   totalItems: Int,
   arrows: List<Arrow>,
+  bookmarks: List<BookmarkItem>,
+  currentStepBookmarks: List<BookmarkItem>,
+  canAddMoreBookmarks: Boolean,
   bookmarkedIndex: Int,
   isAtBookmark: Boolean,
   searchQuery: String,
@@ -120,6 +149,9 @@ private fun PatternPlayerScreenContent(
   onIndexChange: (Int) -> Unit,
   onSaveBookmark: () -> Unit,
   onGoToBookmark: () -> Unit,
+  onAddBookmark: (Int) -> Unit,
+  onDeleteBookmark: (String) -> Unit,
+  onGoToBookmarkById: (String) -> Unit,
   onToggleSearch: () -> Unit,
   onToggleBookmark: () -> Unit,
   onSearchQueryChange: (String) -> Unit,
@@ -172,8 +204,8 @@ private fun PatternPlayerScreenContent(
     ) {
       // Header Section with Search Toggle
       Column(
+        modifier = Modifier.padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(horizontal = 36.dp),
       ) {
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -208,118 +240,14 @@ private fun PatternPlayerScreenContent(
 
         // Bookmark UI (when bookmark mode is active)
         if (isBookmarkMode) {
-          Column(
-            modifier = Modifier
-              .padding(16.dp),
-          ) {
-            Image(
-              painter = painterResource(R.drawable.img_bookmark_title),
-              contentDescription = null,
-              modifier = Modifier
-                .width(140.dp)
-                .padding(bottom = 16.dp),
-            )
-
-            Box(
-              modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(TamaGray02),
-            )
-
-            Surface(
-              modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .clickable {
-                  onIndexChange(bookmarkedIndex)
-                  onToggleBookmark() // Close bookmark mode
-                },
-            ) {
-              Row(
-                modifier = Modifier
-                  .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-              ) {
-                Icon(
-                  painter = painterResource(R.drawable.ic_star_pink),
-                  contentDescription = null,
-                  tint = Color.Unspecified,
-                )
-                Spacer(
-                  modifier = Modifier.width(16.dp),
-                )
-                Text(
-                  text = "${bookmarkedIndex + 1}단계",
-                  style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = TamaPink02,
-                  ),
-                )
-                Spacer(
-                  modifier = Modifier.weight(1f),
-                )
-                Icon(
-                  painter = painterResource(R.drawable.ic_arrow_pink_right),
-                  contentDescription = null,
-                  tint = Color.Unspecified,
-                )
-              }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Second bookmark item (example)
-            Surface(
-              shape = RoundedCornerShape(12.dp),
-              color = Color(0xFFB8E6FF),
-              modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp)
-                .clickable {
-                  onIndexChange(2) // Go to step 3 (index 2)
-                  onToggleBookmark() // Close bookmark mode
-                },
-            ) {
-              Column(
-                modifier = Modifier.padding(16.dp),
-              ) {
-                Text(
-                  text = "3단계",
-                  style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF2980B9),
-                  ),
-                )
-              }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Third bookmark item (No data example)
-            Surface(
-              shape = RoundedCornerShape(12.dp),
-              color = Color(0xFFE8D5FF),
-              modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            ) {
-              Column(
-                modifier = Modifier.padding(16.dp),
-              ) {
-                Text(
-                  text = "No data",
-                  style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF9B59B6),
-                  ),
-                )
-              }
-            }
-          }
+          BookmarkManagementScreen(
+            bookmarks = bookmarks,
+            canAddMore = canAddMoreBookmarks,
+            onAddBookmark = { onAddBookmark(currentIndex) },
+            onBookmarkClick = { bookmark -> onGoToBookmarkById(bookmark.id) },
+            onDeleteBookmark = { bookmark -> onDeleteBookmark(bookmark.id) },
+            onToggleBookmark = onToggleBookmark,
+          )
         }
       }
 
@@ -365,7 +293,6 @@ private fun PatternPlayerScreenContent(
           }
         }
       } else if (isBookmarkMode) {
-        // Bookmark mode content is handled above
         Spacer(modifier = Modifier.weight(1f))
       } else {
         // HorizontalPager for smooth swipe navigation
@@ -379,18 +306,18 @@ private fun PatternPlayerScreenContent(
         ) { virtualPageIndex ->
           val actualIndex = virtualPageToIndex(virtualPageIndex)
           val pageArrows = if (actualIndex < totalItems) {
-            com.hyunjung.chamcoach.data.PatternsRepository.tamagotchiArrowSet.items.getOrNull(
-              actualIndex,
-            )?.arrows ?: emptyList()
+            PatternsRepository.tamagotchiArrowSet.items.getOrNull(actualIndex)?.arrows
+              ?: emptyList()
           } else {
             emptyList()
           }
 
           PatternDisplayCard(
-            onSaveBookmark = onSaveBookmark,
-            isAtBookmark = isAtBookmark,
-//                        stepNumber = actualIndex + 1,
             arrows = pageArrows,
+            currentStepBookmarks = if (actualIndex == currentIndex) currentStepBookmarks else emptyList(),
+            canAddMoreBookmarks = canAddMoreBookmarks,
+            onSaveBookmark = onSaveBookmark,
+            onAddBookmark = { onAddBookmark(actualIndex) },
           )
         }
       }
@@ -431,6 +358,13 @@ private fun PatternPlayerScreenPreview() {
       onToggleBookmark = {},
       onSearchQueryChange = {},
       onGoToSearchResult = {},
+      bookmarks = listOf(),
+      currentStepBookmarks = listOf(),
+      canAddMoreBookmarks = true,
+      onAddBookmark = {},
+      onDeleteBookmark = {},
+      onGoToBookmarkById = {},
+      modifier = Modifier,
     )
   }
 }
@@ -471,6 +405,13 @@ private fun PatternPlayerScreenSearchPreview() {
       onToggleBookmark = {},
       onSearchQueryChange = {},
       onGoToSearchResult = {},
+      bookmarks = listOf(),
+      currentStepBookmarks = listOf(),
+      canAddMoreBookmarks = true,
+      onAddBookmark = {},
+      onDeleteBookmark = {},
+      onGoToBookmarkById = {},
+      modifier = Modifier,
     )
   }
 }
@@ -496,6 +437,13 @@ private fun PatternPlayerScreenBookmarkPreview() {
       onToggleBookmark = {},
       onSearchQueryChange = {},
       onGoToSearchResult = {},
+      bookmarks = listOf(),
+      currentStepBookmarks = listOf(),
+      canAddMoreBookmarks = true,
+      onAddBookmark = {},
+      onDeleteBookmark = {},
+      onGoToBookmarkById = {},
+      modifier = Modifier,
     )
   }
 }

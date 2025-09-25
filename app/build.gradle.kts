@@ -20,6 +20,7 @@ plugins {
     id("hyunjung.chamcoach.spotless")
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
@@ -76,9 +77,12 @@ dependencies {
     // datastore
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
+    implementation(libs.kotlinx.serialization.json)
+
     // di
     implementation(libs.hilt.android)
     implementation(libs.androidx.ui.tooling)
+    implementation(libs.androidx.compose.ui.graphics)
     ksp(libs.hilt.compiler)
     androidTestImplementation(libs.hilt.testing)
     kspAndroidTest(libs.hilt.compiler)
