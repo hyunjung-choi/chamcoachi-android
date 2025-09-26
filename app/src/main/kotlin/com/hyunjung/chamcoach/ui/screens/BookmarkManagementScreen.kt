@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.hyunjung.chamcoach.ui.screens
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -69,14 +71,14 @@ fun BookmarkManagementScreen(
       painter = painterResource(R.drawable.img_bookmark_title),
       contentDescription = null,
       modifier = Modifier
-        .width(140.dp)
-        .padding(bottom = 16.dp),
+          .width(140.dp)
+          .padding(bottom = 16.dp),
     )
 
     Box(
       modifier = Modifier
-        .fillMaxWidth()
-        .height(1.dp),
+          .fillMaxWidth()
+          .height(1.dp),
     )
 
     // 북마크 슬롯들 (최대 3개)
@@ -116,14 +118,14 @@ private fun ExistingBookmarkItem(
 ) {
   Surface(
     modifier = modifier
-      .fillMaxWidth()
-      .padding(vertical = 4.dp)
-      .clickable { onClick() },
+        .fillMaxWidth()
+        .padding(vertical = 4.dp)
+        .clickable { onClick() },
   ) {
     Row(
       modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp),
+          .fillMaxWidth()
+          .padding(16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
       // 북마크 아이콘 (색상별로 다른 아이콘)
@@ -203,20 +205,20 @@ private fun EmptyBookmarkSlot(
   Surface(
     shape = RoundedCornerShape(12.dp),
     modifier = modifier
-      .fillMaxWidth()
-      .padding(vertical = 4.dp)
-      .then(
-        if (onClick != null) {
-          Modifier.clickable { onClick() }
-        } else {
-          Modifier
-        },
-      ),
+        .fillMaxWidth()
+        .padding(vertical = 4.dp)
+        .then(
+            if (onClick != null) {
+                Modifier.clickable { onClick() }
+            } else {
+                Modifier
+            },
+        ),
   ) {
     Row(
       modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp),
+          .fillMaxWidth()
+          .padding(16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
       if (canAdd) {
@@ -327,7 +329,4 @@ private fun ExistingDesignBookmarkScreenFullPreview() {
       onToggleBookmark = {},
     )
   }
-}
-
-private fun main() {
 }

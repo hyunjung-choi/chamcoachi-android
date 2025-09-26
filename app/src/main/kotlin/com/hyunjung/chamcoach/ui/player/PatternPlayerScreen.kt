@@ -15,7 +15,7 @@
  */
 package com.hyunjung.chamcoach.ui.player
 
-import BookmarkManagementScreen
+import com.hyunjung.chamcoach.ui.screens.BookmarkManagementScreen
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -95,10 +95,7 @@ fun PatternPlayerScreen(
     isSearchMode = state.isSearchMode,
     isBookmarkMode = state.isBookmarkMode,
     onIndexChange = { viewModel.setIndex(it) },
-    onSaveBookmark = {
-      pendingBookmarkStepIndex = state.currentIndex
-      showAddBookmarkDialog = true
-    },
+    onSaveBookmark = { viewModel.saveBookmark() },
     onGoToBookmark = { viewModel.goToBookmark() },
     onAddBookmark = { stepIndex ->
       pendingBookmarkStepIndex = stepIndex
@@ -244,8 +241,8 @@ private fun PatternPlayerScreenContent(
             bookmarks = bookmarks,
             canAddMore = canAddMoreBookmarks,
             onAddBookmark = { onAddBookmark(currentIndex) },
-            onBookmarkClick = { bookmark -> onGoToBookmarkById(bookmark.id) },
-            onDeleteBookmark = { bookmark -> onDeleteBookmark(bookmark.id) },
+            onBookmarkClick = { bookmark: BookmarkItem -> onGoToBookmarkById(bookmark.id) },
+            onDeleteBookmark = { bookmark: BookmarkItem -> onDeleteBookmark(bookmark.id) },
             onToggleBookmark = onToggleBookmark,
           )
         }
