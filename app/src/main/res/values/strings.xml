@@ -14,7 +14,7 @@
   limitations under the License.
 -->
 <resources>
-    <string name="app_name">ChamCoach</string>
+    <string name="app_name">참코치</string>
     <string name="search">검색</string>
     <string name="search_result">검색 결과</string>
     <string name="bookmark">북마크</string>
