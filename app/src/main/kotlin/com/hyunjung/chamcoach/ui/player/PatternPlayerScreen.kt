@@ -15,7 +15,6 @@
  */
 package com.hyunjung.chamcoach.ui.player
 
-import com.hyunjung.chamcoach.ui.screens.BookmarkManagementScreen
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -67,6 +66,7 @@ import com.hyunjung.chamcoach.ui.component.ChamCoachBottomBar
 import com.hyunjung.chamcoach.ui.component.ChamCoachHeader
 import com.hyunjung.chamcoach.ui.component.PatternDisplayCard
 import com.hyunjung.chamcoach.ui.component.SearchResultItem
+import com.hyunjung.chamcoach.ui.screens.BookmarkManagementScreen
 import com.hyunjung.chamcoach.ui.theme.ChamCoachTheme
 import com.hyunjung.chamcoach.ui.theme.TamaGray01
 
