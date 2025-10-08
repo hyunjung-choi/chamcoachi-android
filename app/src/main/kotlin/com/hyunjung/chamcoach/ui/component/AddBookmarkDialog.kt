@@ -16,8 +16,6 @@
 package com.hyunjung.chamcoach.ui.component
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,12 +25,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -43,13 +40,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.hyunjung.chamcoach.R
 import com.hyunjung.chamcoach.data.BookmarkColor
 import com.hyunjung.chamcoach.ui.theme.ChamCoachTheme
 import com.hyunjung.chamcoach.ui.theme.TamaBlue02
@@ -146,7 +144,7 @@ private fun AddBookmarkDialogContent(
 
     Row(
       modifier = Modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.SpaceEvenly,
+      horizontalArrangement = Arrangement.SpaceBetween,
     ) {
       ColorOption(
         color = TamaPink02,
@@ -226,27 +224,29 @@ private fun ColorOption(
     modifier = modifier.clickable { onClick() },
   ) {
     Box(
-      modifier = Modifier
-        .size(48.dp)
-        .clip(CircleShape)
-        .background(color)
-        .then(
-          if (isSelected) {
-            Modifier.border(3.dp, Color.Black, CircleShape)
-          } else {
-            Modifier.border(2.dp, Color.Gray.copy(alpha = 0.3f), CircleShape)
-          },
-        ),
-    )
-
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Text(
-      text = label,
-      fontSize = 12.sp,
-      fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-      color = if (isSelected) Color.Black else Color.Gray,
-    )
+//            modifier = Modifier
+//                .size(48.dp)
+//                .clip(CircleShape)
+//                .background(color)
+//                .then(
+//                    if (isSelected) {
+//                        Modifier.border(3.dp, Color.Black, CircleShape)
+//                    } else {
+//                        Modifier.border(2.dp, Color.Gray.copy(alpha = 0.3f), CircleShape)
+//                    },
+//                ),
+    ) {
+      Icon(
+        modifier = Modifier.padding(12.dp),
+        painter = when (label) {
+          "분홍" -> painterResource(R.drawable.ic_star_pink_unbookmarked)
+          "파랑" -> painterResource(R.drawable.ic_star_blue_unbookmarked)
+          else -> painterResource(R.drawable.ic_star_purple_unbookmarked)
+        },
+        contentDescription = null,
+        tint = Color.Unspecified,
+      )
+    }
   }
 }
 
