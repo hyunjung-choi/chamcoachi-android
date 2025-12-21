@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hyunjung.chamcoach.core.designsystem"
+    namespace = "com.hyunjung.chamcoachi.core.designsystem"
     compileSdk = 36
 
     defaultConfig {

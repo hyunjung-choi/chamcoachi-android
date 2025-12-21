@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ChamCoach"
+rootProject.name = "ChamCoachi"
 include(":app")
 include(":core:designsystem")

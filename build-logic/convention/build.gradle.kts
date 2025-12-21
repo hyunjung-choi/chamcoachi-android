@@ -2,7 +2,7 @@ plugins {
   `kotlin-dsl`
 }
 
-group = "com.hyunjung.chamcoach.buildlogic"
+group = "com.hyunjung.chamcoachi.buildlogic"
 
 dependencies {
   compileOnly(libs.android.gradlePlugin)
@@ -14,31 +14,31 @@ dependencies {
 gradlePlugin {
   plugins {
     register("androidApplicationCompose") {
-      id = "hyunjung.chamcoach.android.application.compose"
+      id = "hyunjung.chamcoachi.android.application.compose"
       implementationClass = "AndroidApplicationComposeConventionPlugin"
     }
     register("androidApplication") {
-      id = "hyunjung.chamcoach.android.application"
+      id = "hyunjung.chamcoachi.android.application"
       implementationClass = "AndroidApplicationConventionPlugin"
     }
     register("androidLibraryCompose") {
-      id = "hyunjung.chamcoach.android.library.compose"
+      id = "hyunjung.chamcoachi.android.library.compose"
       implementationClass = "AndroidLibraryComposeConventionPlugin"
     }
     register("androidLibrary") {
-      id = "hyunjung.chamcoach.android.library"
+      id = "hyunjung.chamcoachi.android.library"
       implementationClass = "AndroidLibraryConventionPlugin"
     }
     register("androidFeature") {
-      id = "hyunjung.chamcoach.android.feature"
+      id = "hyunjung.chamcoachi.android.feature"
       implementationClass = "AndroidFeatureConventionPlugin"
     }
     register("androidHilt") {
-      id = "hyunjung.chamcoach.android.hilt"
+      id = "hyunjung.chamcoachi.android.hilt"
       implementationClass = "AndroidHiltConventionPlugin"
     }
     register("spotless") {
-      id = "hyunjung.chamcoach.spotless"
+      id = "hyunjung.chamcoachi.spotless"
       implementationClass = "SpotlessConventionPlugin"
     }
   }

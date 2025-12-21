@@ -1,34 +1,19 @@
-/*
- * Copyright 2025 ChamCoach
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 plugins {
-    id("hyunjung.chamcoach.android.application")
-    id("hyunjung.chamcoach.android.application.compose")
-    id("hyunjung.chamcoach.android.hilt")
-    id("hyunjung.chamcoach.spotless")
+    id("hyunjung.chamcoachi.android.application")
+    id("hyunjung.chamcoachi.android.application.compose")
+    id("hyunjung.chamcoachi.android.hilt")
+    id("hyunjung.chamcoachi.spotless")
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
-    namespace = "com.hyunjung.chamcoach"
+    namespace = "com.hyunjung.chamcoachi"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.hyunjung.chamcoach"
+        applicationId = "com.hyunjung.chamcoachi"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

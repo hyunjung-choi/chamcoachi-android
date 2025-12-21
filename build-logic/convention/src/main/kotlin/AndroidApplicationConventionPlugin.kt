@@ -1,5 +1,5 @@
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
-import com.hyunjung.chamcoach.compose.configureKotlinAndroid
+import com.hyunjung.chamcoachi.compose.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure

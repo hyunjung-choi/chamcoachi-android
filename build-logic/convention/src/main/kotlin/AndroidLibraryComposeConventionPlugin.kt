@@ -1,5 +1,5 @@
 import com.android.build.gradle.LibraryExtension
-import com.hyunjung.chamcoach.compose.configureAndroidCompose
+import com.hyunjung.chamcoachi.compose.configureAndroidCompose
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
