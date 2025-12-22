@@ -9,19 +9,19 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-val LocalChamCoachColors = staticCompositionLocalOf { TamaColors }
+val LocalChamCoachiColors = staticCompositionLocalOf { ChamCoachiColors }
 
-object ChamCoachTheme {
-    val colors: TamaColors
+object ChamCoachiTheme {
+    val colors: ChamCoachiColors
         @Composable
-        get() = LocalChamCoachColors.current
+        get() = LocalChamCoachiColors.current
 }
 
 @Composable
-fun ChamCoachTheme(
+fun ChamCoachiTheme(
     content: @Composable () -> Unit
 ) {
-    val colorScheme = TamaColors
+    val colorScheme = ChamCoachiColors
 
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -32,7 +32,7 @@ fun ChamCoachTheme(
     }
 
     CompositionLocalProvider(
-        LocalChamCoachColors provides colorScheme,
+        LocalChamCoachiColors provides colorScheme,
         content = content
     )
 }
