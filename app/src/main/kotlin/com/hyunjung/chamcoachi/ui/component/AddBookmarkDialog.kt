@@ -208,25 +208,25 @@ private fun ColorOption(
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = modifier.clickable { onClick() },
   ) {
-    Box(
-//            modifier = Modifier
-//                .size(48.dp)
-//                .clip(CircleShape)
-//                .background(color)
-//                .then(
-//                    if (isSelected) {
-//                        Modifier.border(3.dp, Color.Black, CircleShape)
-//                    } else {
-//                        Modifier.border(2.dp, Color.Gray.copy(alpha = 0.3f), CircleShape)
-//                    },
-//                ),
-    ) {
+    Box {
       Icon(
         modifier = Modifier.padding(12.dp),
         painter = when (label) {
-          "분홍" -> painterResource(R.drawable.ic_star_pink_unbookmarked)
-          "파랑" -> painterResource(R.drawable.ic_star_blue_unbookmarked)
-          else -> painterResource(R.drawable.ic_star_purple_unbookmarked)
+          "분홍" -> if (isSelected) {
+            painterResource(R.drawable.ic_pink_star_checked)
+          } else {
+            painterResource(R.drawable.ic_star_pink_unbookmarked)
+          }
+          "파랑" -> if (isSelected) {
+            painterResource(R.drawable.ic_blue_star_checked)
+          } else {
+            painterResource(R.drawable.ic_star_blue_unbookmarked)
+          }
+          else -> if (isSelected) {
+            painterResource(R.drawable.ic_purple_star_checked)
+          } else {
+            painterResource(R.drawable.ic_star_purple_unbookmarked)
+          }
         },
         contentDescription = null,
         tint = Color.Unspecified,
