@@ -32,11 +32,11 @@ import androidx.compose.ui.unit.sp
 import com.hyunjung.chamcoachi.R
 import com.hyunjung.chamcoachi.data.BookmarkColor
 import com.hyunjung.chamcoachi.data.BookmarkItem
-import com.hyunjung.chamcoachi.ui.theme.ChamCoachiTheme
 import com.hyunjung.chamcoachi.ui.theme.ChamCoachiBlue02
 import com.hyunjung.chamcoachi.ui.theme.ChamCoachiGray01
 import com.hyunjung.chamcoachi.ui.theme.ChamCoachiPink02
 import com.hyunjung.chamcoachi.ui.theme.ChamCoachiPurple02
+import com.hyunjung.chamcoachi.ui.theme.ChamCoachiTheme
 
 @Composable
 fun BookmarkManagementScreen(

@@ -238,16 +238,16 @@ private fun ColorOption(
 @Preview(showBackground = true)
 @Composable
 private fun AddBookmarkDialogPreview() {
-    ChamCoachiTheme {
-        AddBookmarkDialogContent(
-            currentStep = 4,
-            existingBookmarksCount = 1,
-            onDismiss = {},
-            onConfirm = { _, _ -> },
-            title = "다마고치 2",
-            selectedColor = BookmarkColor.PINK,
-            onTitleChange = {},
-            onColorChange = {},
-        )
-    }
+  ChamCoachiTheme {
+    AddBookmarkDialogContent(
+      currentStep = 4,
+      existingBookmarksCount = 1,
+      onDismiss = {},
+      onConfirm = { _, _ -> },
+      title = "다마고치 2",
+      selectedColor = BookmarkColor.PINK,
+      onTitleChange = {},
+      onColorChange = {},
+    )
+  }
 }

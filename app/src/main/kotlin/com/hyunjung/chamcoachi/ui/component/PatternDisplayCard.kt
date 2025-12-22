@@ -32,8 +32,8 @@ import com.hyunjung.chamcoachi.R
 import com.hyunjung.chamcoachi.data.Arrow
 import com.hyunjung.chamcoachi.data.BookmarkColor
 import com.hyunjung.chamcoachi.data.BookmarkItem
-import com.hyunjung.chamcoachi.ui.theme.ChamCoachiTheme
 import com.hyunjung.chamcoachi.ui.theme.ChamCoachiGray01
+import com.hyunjung.chamcoachi.ui.theme.ChamCoachiTheme
 
 @Composable
 fun PatternDisplayCard(

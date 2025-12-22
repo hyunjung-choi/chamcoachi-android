@@ -52,8 +52,8 @@ import com.hyunjung.chamcoachi.ui.component.ChamCoachiHeader
 import com.hyunjung.chamcoachi.ui.component.PatternDisplayCard
 import com.hyunjung.chamcoachi.ui.component.SearchResultItem
 import com.hyunjung.chamcoachi.ui.screens.BookmarkManagementScreen
-import com.hyunjung.chamcoachi.ui.theme.ChamCoachiTheme
 import com.hyunjung.chamcoachi.ui.theme.ChamCoachiGray01
+import com.hyunjung.chamcoachi.ui.theme.ChamCoachiTheme
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

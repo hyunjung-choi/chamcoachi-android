@@ -63,7 +63,7 @@ fun ChamCoachiBottomBar(
           modifier = Modifier.size(56.dp),
           painter = painterResource(R.drawable.ic_search_with_text),
           contentDescription = null,
-            tint = if (isSearchMode) ChamCoachiPurpleText else ChamCoachiGray01,
+          tint = if (isSearchMode) ChamCoachiPurpleText else ChamCoachiGray01,
         )
       }
     }
