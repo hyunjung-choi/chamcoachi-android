@@ -14,21 +14,21 @@ import com.hyunjung.chamcoachi.R
 
 @Composable
 fun ChamCoachiHeader(modifier: Modifier = Modifier) {
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == ORIENTATION_LANDSCAPE
+  val configuration = LocalConfiguration.current
+  val isLandscape = configuration.orientation == ORIENTATION_LANDSCAPE
 
-    val contentScale = if (isLandscape) ContentScale.Fit else ContentScale.Crop
+  val contentScale = if (isLandscape) ContentScale.Fit else ContentScale.Crop
 
-    val headerModifier = if (isLandscape) {
-        modifier.heightIn(max = 200.dp)
-    } else {
-        modifier.fillMaxWidth()
-    }
+  val headerModifier = if (isLandscape) {
+    modifier.heightIn(max = 200.dp)
+  } else {
+    modifier.fillMaxWidth()
+  }
 
-    Image(
-        modifier = headerModifier,
-        painter = painterResource(R.drawable.img_cham_coach_title),
-        contentDescription = null,
-        contentScale = contentScale,
-    )
+  Image(
+    modifier = headerModifier,
+    painter = painterResource(R.drawable.img_cham_coach_title),
+    contentDescription = null,
+    contentScale = contentScale,
+  )
 }
