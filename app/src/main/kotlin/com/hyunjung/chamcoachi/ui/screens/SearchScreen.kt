@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -32,124 +33,130 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.chamcoach.core.designsystem.ChamCoachiTheme
 import com.hyunjung.chamcoachi.ui.theme.ChamCoachiGray01
 import com.hyunjung.chamcoachi.ui.theme.ChamCoachiPurple02
+import com.hyunjung.chamcoachi.ui.theme.ChamCoachiTheme
 
 @Composable
 fun SearchScreen() {
   var searchText by remember { mutableStateOf("") }
 
   Box(
-    modifier = Modifier
-      .fillMaxSize()
-      .background(
-        Brush.verticalGradient(
-          colors = listOf(
-            ChamCoachiPurple02,
-            MaterialTheme.colorScheme.background,
-          ),
-        ),
-      ),
+    modifier = Modifier.fillMaxSize(),
+    contentAlignment = Alignment.TopCenter,
   ) {
-    Column(
+    Box(
       modifier = Modifier
         .fillMaxSize()
-        .padding(16.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      // 헤더
-      Text(
-        text = "Search",
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onBackground,
-        modifier = Modifier.padding(vertical = 16.dp),
-      )
-
-      // 검색 입력 필드
-      OutlinedTextField(
-        value = searchText,
-        onValueChange = { searchText = it },
-        label = { Text("검색하기") },
-        leadingIcon = {
-          Icon(Icons.Default.Search, contentDescription = "Search")
-        },
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(bottom = 16.dp),
-        shape = RoundedCornerShape(12.dp),
-      )
-
-      // 검색 결과 영역
-      Card(
-        modifier = Modifier
-          .fillMaxWidth()
-          .weight(1f),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-          containerColor = MaterialTheme.colorScheme.surface,
+        .widthIn(max = 600.dp)
+        .background(
+          Brush.verticalGradient(
+            colors = listOf(
+              ChamCoachiPurple02,
+              MaterialTheme.colorScheme.background,
+            ),
+          ),
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-      ) {
-        Column(
-          modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.Center,
-        ) {
-          Text(
-            text = "🔍",
-            fontSize = 64.sp,
-            modifier = Modifier.padding(bottom = 16.dp),
-          )
-
-          Text(
-            text = if (searchText.isEmpty()) "검색어를 입력하세요" else "\"$searchText\" 검색 중...",
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-          )
-        }
-      }
-
-      // 하단 정보
-      Row(
+    ) {
+      Column(
         modifier = Modifier
-          .fillMaxWidth()
+          .fillMaxSize()
           .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+        horizontalAlignment = Alignment.CenterHorizontally,
       ) {
+        // 헤더
+        Text(
+          text = "Search",
+          style = MaterialTheme.typography.titleLarge,
+          color = MaterialTheme.colorScheme.onBackground,
+          modifier = Modifier.padding(vertical = 16.dp),
+        )
+
+        // 검색 입력 필드
+        OutlinedTextField(
+          value = searchText,
+          onValueChange = { searchText = it },
+          label = { Text("검색하기") },
+          leadingIcon = {
+            Icon(Icons.Default.Search, contentDescription = "Search")
+          },
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+          shape = RoundedCornerShape(12.dp),
+        )
+
+        // 검색 결과 영역
+        Card(
+          modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f),
+          shape = RoundedCornerShape(24.dp),
+          colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+          ),
+          elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        ) {
+          Column(
+            modifier = Modifier
+              .fillMaxSize()
+              .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+          ) {
+            Text(
+              text = "🔍",
+              fontSize = 64.sp,
+              modifier = Modifier.padding(bottom = 16.dp),
+            )
+
+            Text(
+              text = if (searchText.isEmpty()) "검색어를 입력하세요" else "\"$searchText\" 검색 중...",
+              fontSize = 16.sp,
+              color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+            )
+          }
+        }
+
+        // 하단 정보
         Row(
-          horizontalArrangement = Arrangement.spacedBy(4.dp),
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+          horizontalArrangement = Arrangement.SpaceBetween,
           verticalAlignment = Alignment.CenterVertically,
         ) {
-          Box(
-            modifier = Modifier
-              .size(24.dp)
-              .clip(CircleShape)
-              .background(ChamCoachiGray01),
+          Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+          ) {
+            Box(
+              modifier = Modifier
+                .size(24.dp)
+                .clip(CircleShape)
+                .background(ChamCoachiGray01),
+            )
+            Box(
+              modifier = Modifier
+                .size(24.dp)
+                .clip(CircleShape)
+                .background(ChamCoachiGray01),
+            )
+          }
+
+          Text(
+            text = "12 · 1B",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground,
           )
-          Box(
-            modifier = Modifier
-              .size(24.dp)
-              .clip(CircleShape)
-              .background(ChamCoachiGray01),
+
+          Text(
+            text = "18",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
           )
         }
-
-        Text(
-          text = "12 · 1B",
-          style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onBackground,
-        )
-
-        Text(
-          text = "18",
-          style = MaterialTheme.typography.titleMedium,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.onBackground,
-        )
       }
     }
   }

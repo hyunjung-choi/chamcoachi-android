@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -31,7 +32,7 @@ import com.hyunjung.chamcoachi.ui.theme.ChamCoachiGray01
 import com.hyunjung.chamcoachi.ui.theme.ChamCoachiOrange02
 import com.hyunjung.chamcoachi.ui.theme.ChamCoachiPurple02
 
-data class BookmarkItem(
+data class BookmarkDisplayItem(
   val emoji: String,
   val title: String,
   val number: String,
@@ -42,105 +43,111 @@ data class BookmarkItem(
 @Composable
 fun BookmarkScreen() {
   val bookmarkItems = listOf(
-    BookmarkItem("⭐", "1B", "1B", ChamCoachiOrange02),
-    BookmarkItem("⭐", "3주차", "3주차", ChamCoachiBlue02),
-    BookmarkItem("⭐", "No data", "No data", ChamCoachiPurple02, hasData = false),
+    BookmarkDisplayItem("⭐", "1B", "1B", ChamCoachiOrange02),
+    BookmarkDisplayItem("⭐", "3주차", "3주차", ChamCoachiBlue02),
+    BookmarkDisplayItem("⭐", "No data", "No data", ChamCoachiPurple02, hasData = false),
   )
 
   Box(
-    modifier = Modifier
-      .fillMaxSize()
-      .background(
-        Brush.verticalGradient(
-          colors = listOf(
-            ChamCoachiPurple02,
-            MaterialTheme.colorScheme.background,
-          ),
-        ),
-      ),
+    modifier = Modifier.fillMaxSize(),
+    contentAlignment = Alignment.TopCenter,
   ) {
-    Column(
+    Box(
       modifier = Modifier
         .fillMaxSize()
-        .padding(16.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      // 헤더
-      Text(
-        text = "Bookmark",
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onBackground,
-        modifier = Modifier.padding(vertical = 16.dp),
-      )
-
-      // 북마크 리스트
-      Card(
-        modifier = Modifier
-          .fillMaxWidth()
-          .weight(1f),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-          containerColor = MaterialTheme.colorScheme.surface,
+        .widthIn(max = 600.dp)
+        .background(
+          Brush.verticalGradient(
+            colors = listOf(
+              ChamCoachiPurple02,
+              MaterialTheme.colorScheme.background,
+            ),
+          ),
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+    ) {
+      Column(
+        modifier = Modifier
+          .fillMaxSize()
+          .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
       ) {
-        Column(
+        // 헤더
+        Text(
+          text = "Bookmark",
+          style = MaterialTheme.typography.titleLarge,
+          color = MaterialTheme.colorScheme.onBackground,
+          modifier = Modifier.padding(vertical = 16.dp),
+        )
+
+        // 북마크 리스트
+        Card(
           modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-          verticalArrangement = Arrangement.spacedBy(16.dp),
+            .fillMaxWidth()
+            .weight(1f),
+          shape = RoundedCornerShape(24.dp),
+          colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+          ),
+          elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         ) {
-          bookmarkItems.forEach { item ->
-            BookmarkItemRow(item = item)
+          Column(
+            modifier = Modifier
+              .fillMaxSize()
+              .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+          ) {
+            bookmarkItems.forEach { item ->
+              BookmarkItemRow(item = item)
+            }
           }
         }
-      }
 
-      // 하단 정보
-      Row(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-      ) {
+        // 하단 정보
         Row(
-          horizontalArrangement = Arrangement.spacedBy(4.dp),
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+          horizontalArrangement = Arrangement.SpaceBetween,
           verticalAlignment = Alignment.CenterVertically,
         ) {
-          Box(
-            modifier = Modifier
-              .size(24.dp)
-              .clip(CircleShape)
-              .background(ChamCoachiGray01),
+          Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+          ) {
+            Box(
+              modifier = Modifier
+                .size(24.dp)
+                .clip(CircleShape)
+                .background(ChamCoachiGray01),
+            )
+            Box(
+              modifier = Modifier
+                .size(24.dp)
+                .clip(CircleShape)
+                .background(ChamCoachiGray01),
+            )
+          }
+
+          Text(
+            text = "1B · 1B",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground,
           )
-          Box(
-            modifier = Modifier
-              .size(24.dp)
-              .clip(CircleShape)
-              .background(ChamCoachiGray01),
+
+          Text(
+            text = "18",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
           )
         }
-
-        Text(
-          text = "1B · 1B",
-          style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onBackground,
-        )
-
-        Text(
-          text = "18",
-          style = MaterialTheme.typography.titleMedium,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.onBackground,
-        )
       }
     }
   }
 }
 
 @Composable
-fun BookmarkItemRow(item: BookmarkItem) {
+fun BookmarkItemRow(item: BookmarkDisplayItem) {
   Row(
     modifier = Modifier.fillMaxWidth(),
     horizontalArrangement = Arrangement.SpaceBetween,
