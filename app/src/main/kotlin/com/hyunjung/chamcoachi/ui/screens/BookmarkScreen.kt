@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -31,182 +32,188 @@ import com.hyunjung.chamcoachi.ui.theme.ChamCoachiGray01
 import com.hyunjung.chamcoachi.ui.theme.ChamCoachiOrange02
 import com.hyunjung.chamcoachi.ui.theme.ChamCoachiPurple02
 
-data class BookmarkItem(
-  val emoji: String,
-  val title: String,
-  val number: String,
-  val color: Color,
-  val hasData: Boolean = true,
+data class BookmarkDisplayItem(
+    val emoji: String,
+    val title: String,
+    val number: String,
+    val color: Color,
+    val hasData: Boolean = true,
 )
 
 @Composable
 fun BookmarkScreen() {
-  val bookmarkItems = listOf(
-    BookmarkItem("⭐", "1B", "1B", ChamCoachiOrange02),
-    BookmarkItem("⭐", "3주차", "3주차", ChamCoachiBlue02),
-    BookmarkItem("⭐", "No data", "No data", ChamCoachiPurple02, hasData = false),
-  )
+    val bookmarkItems = listOf(
+        BookmarkDisplayItem("⭐", "1B", "1B", ChamCoachiOrange02),
+        BookmarkDisplayItem("⭐", "3주차", "3주차", ChamCoachiBlue02),
+        BookmarkDisplayItem("⭐", "No data", "No data", ChamCoachiPurple02, hasData = false),
+    )
 
-  Box(
-    modifier = Modifier
-      .fillMaxSize()
-      .background(
-        Brush.verticalGradient(
-          colors = listOf(
-            ChamCoachiPurple02,
-            MaterialTheme.colorScheme.background,
-          ),
-        ),
-      ),
-  ) {
-    Column(
-      modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter,
     ) {
-      // 헤더
-      Text(
-        text = "Bookmark",
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onBackground,
-        modifier = Modifier.padding(vertical = 16.dp),
-      )
-
-      // 북마크 리스트
-      Card(
-        modifier = Modifier
-          .fillMaxWidth()
-          .weight(1f),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-          containerColor = MaterialTheme.colorScheme.surface,
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-      ) {
-        Column(
-          modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-          verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-          bookmarkItems.forEach { item ->
-            BookmarkItemRow(item = item)
-          }
-        }
-      }
-
-      // 하단 정보
-      Row(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-      ) {
-        Row(
-          horizontalArrangement = Arrangement.spacedBy(4.dp),
-          verticalAlignment = Alignment.CenterVertically,
-        ) {
-          Box(
+        Box(
             modifier = Modifier
-              .size(24.dp)
-              .clip(CircleShape)
-              .background(ChamCoachiGray01),
-          )
-          Box(
-            modifier = Modifier
-              .size(24.dp)
-              .clip(CircleShape)
-              .background(ChamCoachiGray01),
-          )
+                .fillMaxSize()
+                .widthIn(max = 600.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            ChamCoachiPurple02,
+                            MaterialTheme.colorScheme.background,
+                        ),
+                    ),
+                ),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                // 헤더
+                Text(
+                    text = "Bookmark",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(vertical = 16.dp),
+                )
+
+                // 북마크 리스트
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        bookmarkItems.forEach { item ->
+                            BookmarkItemRow(item = item)
+                        }
+                    }
+                }
+
+                // 하단 정보
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(CircleShape)
+                                .background(ChamCoachiGray01),
+                        )
+                        Box(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(CircleShape)
+                                .background(ChamCoachiGray01),
+                        )
+                    }
+
+                    Text(
+                        text = "1B · 1B",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
+
+                    Text(
+                        text = "18",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
+                }
+            }
         }
-
-        Text(
-          text = "1B · 1B",
-          style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onBackground,
-        )
-
-        Text(
-          text = "18",
-          style = MaterialTheme.typography.titleMedium,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.onBackground,
-        )
-      }
     }
-  }
 }
 
 @Composable
-fun BookmarkItemRow(item: BookmarkItem) {
-  Row(
-    modifier = Modifier.fillMaxWidth(),
-    horizontalArrangement = Arrangement.SpaceBetween,
-    verticalAlignment = Alignment.CenterVertically,
-  ) {
+fun BookmarkItemRow(item: BookmarkDisplayItem) {
     Row(
-      horizontalArrangement = Arrangement.spacedBy(12.dp),
-      verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-      // 별 아이콘
-      Canvas(
-        modifier = Modifier.size(24.dp),
-      ) {
-        val starPath = Path().apply {
-          val centerX = size.width / 2
-          val centerY = size.height / 2
-          val outerRadius = size.width / 3
-          val innerRadius = size.width / 6
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // 별 아이콘
+            Canvas(
+                modifier = Modifier.size(24.dp),
+            ) {
+                val starPath = Path().apply {
+                    val centerX = size.width / 2
+                    val centerY = size.height / 2
+                    val outerRadius = size.width / 3
+                    val innerRadius = size.width / 6
 
-          for (i in 0 until 10) {
-            val angle = (i * 36 - 90) * Math.PI / 180
-            val radius = if (i % 2 == 0) outerRadius else innerRadius
-            val x = centerX + (radius * kotlin.math.cos(angle)).toFloat()
-            val y = centerY + (radius * kotlin.math.sin(angle)).toFloat()
+                    for (i in 0 until 10) {
+                        val angle = (i * 36 - 90) * Math.PI / 180
+                        val radius = if (i % 2 == 0) outerRadius else innerRadius
+                        val x = centerX + (radius * kotlin.math.cos(angle)).toFloat()
+                        val y = centerY + (radius * kotlin.math.sin(angle)).toFloat()
 
-            if (i == 0) moveTo(x, y) else lineTo(x, y)
-          }
-          close()
+                        if (i == 0) moveTo(x, y) else lineTo(x, y)
+                    }
+                    close()
+                }
+
+                drawPath(
+                    path = starPath,
+                    color = item.color,
+                )
+            }
+
+            Text(
+                text = item.title,
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (item.hasData) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                },
+            )
         }
 
-        drawPath(
-          path = starPath,
-          color = item.color,
-        )
-      }
-
-      Text(
-        text = item.title,
-        style = MaterialTheme.typography.bodyMedium,
-        color = if (item.hasData) {
-          MaterialTheme.colorScheme.onSurface
-        } else {
-          MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-        },
-      )
+        // 오른쪽 원형 아이콘
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .clip(CircleShape)
+                .background(
+                    if (item.hasData) {
+                        item.color
+                    } else {
+                        Color.Gray.copy(alpha = 0.3f)
+                    },
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = "⭐",
+                fontSize = 16.sp,
+                color = Color.White,
+            )
+        }
     }
-
-    // 오른쪽 원형 아이콘
-    Box(
-      modifier = Modifier
-        .size(32.dp)
-        .clip(CircleShape)
-        .background(
-          if (item.hasData) {
-            item.color
-          } else {
-            Color.Gray.copy(alpha = 0.3f)
-          },
-        ),
-      contentAlignment = Alignment.Center,
-    ) {
-      Text(
-        text = "⭐",
-        fontSize = 16.sp,
-        color = Color.White,
-      )
-    }
-  }
 }
