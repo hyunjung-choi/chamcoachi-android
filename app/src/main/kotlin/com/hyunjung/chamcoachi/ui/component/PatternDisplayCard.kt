@@ -37,302 +37,302 @@ import com.hyunjung.chamcoachi.ui.theme.ChamCoachiTheme
 
 @Composable
 fun PatternDisplayCard(
-  arrows: List<Arrow>,
-  currentStepBookmarks: List<BookmarkItem> = emptyList(),
-  canAddMoreBookmarks: Boolean = true,
-  onSaveBookmark: () -> Unit = {},
-  onAddBookmark: () -> Unit = {},
-  modifier: Modifier = Modifier,
+    arrows: List<Arrow>,
+    currentStepBookmarks: List<BookmarkItem> = emptyList(),
+    canAddMoreBookmarks: Boolean = true,
+    onSaveBookmark: () -> Unit = {},
+    onAddBookmark: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
-  Column(
-    modifier = modifier.fillMaxSize(),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center,
-  ) {
-    BookmarkButtonArea(
-      currentStepBookmarks = currentStepBookmarks,
-      canAddMoreBookmarks = canAddMoreBookmarks,
-      onAddBookmarkClick = onAddBookmark,
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    ArrowListIcon(arrows)
-  }
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        BookmarkButtonArea(
+            currentStepBookmarks = currentStepBookmarks,
+            canAddMoreBookmarks = canAddMoreBookmarks,
+            onAddBookmarkClick = onAddBookmark,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        ArrowListIcon(arrows)
+    }
 }
 
 @Composable
 private fun BookmarkButtonArea(
-  currentStepBookmarks: List<BookmarkItem>,
-  canAddMoreBookmarks: Boolean,
-  onAddBookmarkClick: () -> Unit,
-  modifier: Modifier = Modifier,
+    currentStepBookmarks: List<BookmarkItem>,
+    canAddMoreBookmarks: Boolean,
+    onAddBookmarkClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  val context = LocalContext.current
+    val context = LocalContext.current
 
-  Box(
-    modifier = modifier.fillMaxWidth(),
-    contentAlignment = Alignment.Center,
-  ) {
-    if (currentStepBookmarks.isNotEmpty()) {
-      BookmarkedStepDisplay(
-        bookmarks = currentStepBookmarks,
-        canAddMoreBookmarks = canAddMoreBookmarks,
-        onAddBookmarkClick = onAddBookmarkClick,
-      )
-    } else {
-      Box(
+    Box(
+        modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center,
-      ) {
-        Column(
-          horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-          CustomIconButton(
-            onClick = {
-              if (canAddMoreBookmarks) {
-                onAddBookmarkClick()
-              } else {
-                Toast.makeText(context, "더 이상 북마크를 추가할 수 없습니다.", Toast.LENGTH_SHORT)
-                  .show()
-              }
-            },
-            size = 240.dp,
-          ) {
-            Icon(
-              painter = if (canAddMoreBookmarks) {
-                painterResource(R.drawable.ic_bookmark)
-              } else {
-                painterResource(R.drawable.ic_bookmark)
-              },
-              contentDescription = if (canAddMoreBookmarks) "북마크 추가" else "북마크 저장",
-              tint = Color.Unspecified,
-              modifier = Modifier.size(240.dp),
+    ) {
+        if (currentStepBookmarks.isNotEmpty()) {
+            BookmarkedStepDisplay(
+                bookmarks = currentStepBookmarks,
+                canAddMoreBookmarks = canAddMoreBookmarks,
+                onAddBookmarkClick = onAddBookmarkClick,
             )
-          }
-          Text(
-            text = "북마크 없음",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Normal,
-            color = ChamCoachiGray01,
-          )
+        } else {
+            Box(
+                contentAlignment = Alignment.Center,
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    CustomIconButton(
+                        onClick = {
+                            if (canAddMoreBookmarks) {
+                                onAddBookmarkClick()
+                            } else {
+                                Toast.makeText(context, "더 이상 북마크를 추가할 수 없습니다.", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        },
+                        size = 240.dp,
+                    ) {
+                        Icon(
+                            painter = if (canAddMoreBookmarks) {
+                                painterResource(R.drawable.ic_bookmark)
+                            } else {
+                                painterResource(R.drawable.ic_bookmark)
+                            },
+                            contentDescription = if (canAddMoreBookmarks) "북마크 추가" else "북마크 저장",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(240.dp),
+                        )
+                    }
+                    Text(
+                        text = "북마크 없음",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = ChamCoachiGray01,
+                    )
+                }
+            }
         }
-      }
     }
-  }
 }
 
 @Composable
 private fun BookmarkedStepDisplay(
-  bookmarks: List<BookmarkItem>,
-  canAddMoreBookmarks: Boolean,
-  onAddBookmarkClick: () -> Unit,
-  modifier: Modifier = Modifier,
+    bookmarks: List<BookmarkItem>,
+    canAddMoreBookmarks: Boolean,
+    onAddBookmarkClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  val context = LocalContext.current
+    val context = LocalContext.current
 
-  Box(
-    contentAlignment = Alignment.Center,
-  ) {
-    Column(
-      horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        contentAlignment = Alignment.Center,
     ) {
-      // 북마크가 1개인 경우: 해당 색상 아이콘
-      // 북마크가 여러개인 경우: 첫 번째 북마크 색상 아이콘 또는 조합 표시
-      when {
-        bookmarks.isNotEmpty() && bookmarks.size <= 3 -> {
-          // 단일 북마크: 색상별 아이콘
-          CustomIconButton(
-            onClick = {
-              if (canAddMoreBookmarks) {
-                onAddBookmarkClick()
-              } else {
-                Toast.makeText(context, "더 이상 북마크를 추가할 수 없습니다.", Toast.LENGTH_SHORT)
-                  .show()
-              }
-            },
-            size = 240.dp,
-          ) {
-            Icon(
-              // BookmarkedStepDisplay와 같은 아이콘 크기
-              painter = painterResource(bookmarks.first().color.toBookmarkIcon()),
-              contentDescription = if (canAddMoreBookmarks) "북마크 추가" else "북마크 저장",
-              tint = Color.Unspecified,
-              modifier = Modifier.size(240.dp),
-            )
-          }
-        }
-
-        else -> {
-          // 북마크 없음 (이 경우는 발생하지 않겠지만)
-          Icon(
-            // BookmarkedStepDisplay와 같은 아이콘 크기
-            painter = painterResource(R.drawable.ic_bookmark),
-            contentDescription = "북마크됨",
-            tint = Color.Unspecified,
-            modifier = Modifier.size(240.dp),
-          )
-        }
-      }
-
-      Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-      ) {
-        if (bookmarks.isNotEmpty()) {
-          val displayBookmarks = bookmarks.take(1)
-          displayBookmarks.forEach { bookmark ->
-            if (bookmarks.size == 1) {
-              Text(
-                text = bookmark.title,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
-                color = ChamCoachiGray01,
-              )
-            } else if (bookmarks.size > 1) {
-              Text(
-                text = "${bookmark.title} 외 ${bookmarks.size - 1}개",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
-                color = ChamCoachiGray01,
-              )
-            } else {
-              Text(
-                text = "북마크 없음",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
-                color = ChamCoachiGray01,
-              )
-            }
-          }
-        }
-
-        Row(
-          horizontalArrangement = Arrangement.spacedBy(4.dp),
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-          bookmarks.forEach { bookmark ->
-            Box(
-              modifier = Modifier
-                .size(12.dp)
-                .clip(CircleShape)
-                .background(bookmark.color.toComposeColor()),
-            )
-          }
+            // 북마크가 1개인 경우: 해당 색상 아이콘
+            // 북마크가 여러개인 경우: 첫 번째 북마크 색상 아이콘 또는 조합 표시
+            when {
+                bookmarks.isNotEmpty() && bookmarks.size <= 3 -> {
+                    // 단일 북마크: 색상별 아이콘
+                    CustomIconButton(
+                        onClick = {
+                            if (canAddMoreBookmarks) {
+                                onAddBookmarkClick()
+                            } else {
+                                Toast.makeText(context, "더 이상 북마크를 추가할 수 없습니다.", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        },
+                        size = 240.dp,
+                    ) {
+                        Icon(
+                            // BookmarkedStepDisplay와 같은 아이콘 크기
+                            painter = painterResource(bookmarks.first().color.toBookmarkIcon()),
+                            contentDescription = if (canAddMoreBookmarks) "북마크 추가" else "북마크 저장",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(240.dp),
+                        )
+                    }
+                }
+
+                else -> {
+                    // 북마크 없음 (이 경우는 발생하지 않겠지만)
+                    Icon(
+                        // BookmarkedStepDisplay와 같은 아이콘 크기
+                        painter = painterResource(R.drawable.ic_bookmark),
+                        contentDescription = "북마크됨",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(240.dp),
+                    )
+                }
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (bookmarks.isNotEmpty()) {
+                    val displayBookmarks = bookmarks.take(1)
+                    displayBookmarks.forEach { bookmark ->
+                        if (bookmarks.size == 1) {
+                            Text(
+                                text = bookmark.title,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = ChamCoachiGray01,
+                            )
+                        } else if (bookmarks.size > 1) {
+                            Text(
+                                text = "${bookmark.title} 외 ${bookmarks.size - 1}개",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = ChamCoachiGray01,
+                            )
+                        } else {
+                            Text(
+                                text = "북마크 없음",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = ChamCoachiGray01,
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    bookmarks.forEach { bookmark ->
+                        Box(
+                            modifier = Modifier
+                                .size(12.dp)
+                                .clip(CircleShape)
+                                .background(bookmark.color.toComposeColor()),
+                        )
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
 
 @Composable
 private fun ArrowListIcon(arrows: List<Arrow>) {
-  Row(
-    verticalAlignment = Alignment.CenterVertically,
-    horizontalArrangement = Arrangement.SpaceEvenly,
-    modifier = Modifier.fillMaxWidth(),
-  ) {
-    arrows.forEachIndexed { index, arrow ->
-      Column(
-        modifier = Modifier.weight(1f),
-        horizontalAlignment = Alignment.CenterHorizontally,
-      ) {
-        Box(
-          modifier = Modifier,
-          contentAlignment = Alignment.Center,
-        ) {
-          when (arrow) {
-            Arrow.LEFT -> {
-              Icon(
-                painter = painterResource(R.drawable.ic_arrow_left),
-                contentDescription = "Left arrow",
-                tint = Color.Unspecified,
-                modifier = Modifier.size(48.dp),
-              )
-            }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        arrows.forEachIndexed { index, arrow ->
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Box(
+                    modifier = Modifier,
+                    contentAlignment = Alignment.Center,
+                ) {
+                    when (arrow) {
+                        Arrow.LEFT -> {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_arrow_left),
+                                contentDescription = "Left arrow",
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(48.dp),
+                            )
+                        }
 
-            Arrow.RIGHT -> {
-              Icon(
-                painter = painterResource(R.drawable.ic_arrow_right),
-                contentDescription = "Right arrow",
-                tint = Color.Unspecified,
-                modifier = Modifier.size(48.dp),
-              )
+                        Arrow.RIGHT -> {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_arrow_right),
+                                contentDescription = "Right arrow",
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(48.dp),
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = when (arrow) {
+                        Arrow.LEFT -> "1"
+                        Arrow.RIGHT -> "2"
+                    },
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = ChamCoachiGray01,
+                )
             }
-          }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-          text = when (arrow) {
-            Arrow.LEFT -> "1"
-            Arrow.RIGHT -> "2"
-          },
-          fontSize = 32.sp,
-          fontWeight = FontWeight.SemiBold,
-          color = ChamCoachiGray01,
-        )
-      }
     }
-  }
 }
 
 private fun BookmarkColor.toBookmarkIcon(): Int {
-  return when (this) {
-    BookmarkColor.PINK -> R.drawable.img_check_pink
-    BookmarkColor.BLUE -> R.drawable.img_check_blue
-    BookmarkColor.PURPLE -> R.drawable.img_check_purple
-  }
+    return when (this) {
+        BookmarkColor.PINK -> R.drawable.img_check_pink
+        BookmarkColor.BLUE -> R.drawable.img_check_blue
+        BookmarkColor.PURPLE -> R.drawable.img_check_purple
+    }
 }
 
 @Composable
 private fun BookmarkColor.toComposeColor(): Color {
-  return when (this) {
-    BookmarkColor.PINK -> ChamCoachiPink02
-    BookmarkColor.BLUE -> ChamCoachiBlue02
-    BookmarkColor.PURPLE -> ChamCoachiPurple02
-  }
+    return when (this) {
+        BookmarkColor.PINK -> ChamCoachiPink02
+        BookmarkColor.BLUE -> ChamCoachiBlue02
+        BookmarkColor.PURPLE -> ChamCoachiPurple02
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun PatternDisplayCardPreview() {
-  ChamCoachiTheme {
-    PatternDisplayCard(
-      currentStepBookmarks = listOf(
-        BookmarkItem("0", 0, "집 다마고치"),
-        BookmarkItem("1", 1, "회사 다마고치"),
-      ),
-      arrows = listOf(
-        // 1
-        Arrow.LEFT,
-        // 2
-        Arrow.RIGHT,
-        // 2
-        Arrow.RIGHT,
-        // 1
-        Arrow.LEFT,
-        // 2
-        Arrow.RIGHT,
-      ),
-    )
-  }
+    ChamCoachiTheme {
+        PatternDisplayCard(
+            currentStepBookmarks = listOf(
+                BookmarkItem("0", 0, "집 다마고치"),
+                BookmarkItem("1", 1, "회사 다마고치"),
+            ),
+            arrows = listOf(
+                // 1
+                Arrow.LEFT,
+                // 2
+                Arrow.RIGHT,
+                // 2
+                Arrow.RIGHT,
+                // 1
+                Arrow.LEFT,
+                // 2
+                Arrow.RIGHT,
+            ),
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun PatternDisplayEmptyCardPreview() {
-  ChamCoachiTheme {
-    PatternDisplayCard(
-      arrows = listOf(
-        // 1
-        Arrow.LEFT,
-        // 2
-        Arrow.RIGHT,
-        // 2
-        Arrow.RIGHT,
-        // 1
-        Arrow.LEFT,
-        // 2
-        Arrow.RIGHT,
-      ),
-    )
-  }
+    ChamCoachiTheme {
+        PatternDisplayCard(
+            arrows = listOf(
+                // 1
+                Arrow.LEFT,
+                // 2
+                Arrow.RIGHT,
+                // 2
+                Arrow.RIGHT,
+                // 1
+                Arrow.LEFT,
+                // 2
+                Arrow.RIGHT,
+            ),
+        )
+    }
 }

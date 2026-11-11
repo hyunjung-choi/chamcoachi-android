@@ -17,26 +17,26 @@ import com.hyunjung.chamcoachi.ui.component.ChamCoachiHeader
 
 @Composable
 fun SplashScreen() {
-  Column(
-    modifier = Modifier
-      .fillMaxSize()
-      .background(Color.White),
-    horizontalAlignment = Alignment.CenterHorizontally,
-  ) {
-    ChamCoachiHeader(modifier = Modifier.fillMaxWidth())
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        ChamCoachiHeader(modifier = Modifier.fillMaxWidth())
 
-    Image(
-      painter = painterResource(R.drawable.img_splash),
-      contentDescription = null,
-      alignment = Alignment.Center,
-    )
-  }
+        Image(
+            painter = painterResource(R.drawable.img_splash),
+            contentDescription = null,
+            alignment = Alignment.Center,
+        )
+    }
 }
 
 @Preview
 @Composable
 private fun SplashScreenPreview() {
-  ChamCoachiTheme {
-    SplashScreen()
-  }
+    ChamCoachiTheme {
+        SplashScreen()
+    }
 }

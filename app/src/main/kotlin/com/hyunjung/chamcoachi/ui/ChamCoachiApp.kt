@@ -23,56 +23,56 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ChamCoachiApp(modifier: Modifier = Modifier) {
-  val pagerState = rememberPagerState(pageCount = { 5 })
-  val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(pageCount = { 5 })
+    val coroutineScope = rememberCoroutineScope()
 
-  Column(modifier = modifier.fillMaxSize()) {
-    HorizontalPager(
-      state = pagerState,
-      modifier = Modifier.weight(1f),
-    ) { page ->
-      when (page) {
-        0 -> SplashScreen()
-        1 -> MainScreen(version = "v2")
-        2 -> MainScreen(version = "bookmark")
-        3 -> SearchScreen()
-        4 -> BookmarkScreen()
-      }
+    Column(modifier = modifier.fillMaxSize()) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.weight(1f),
+        ) { page ->
+            when (page) {
+                0 -> SplashScreen()
+                1 -> MainScreen(version = "v2")
+                2 -> MainScreen(version = "bookmark")
+                3 -> SearchScreen()
+                4 -> BookmarkScreen()
+            }
+        }
+
+        NavigationBar {
+            NavigationBarItem(
+                selected = pagerState.currentPage == 1,
+                onClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(1)
+                    }
+                },
+                icon = { Icon(Icons.Default.Home, contentDescription = "Main") },
+                label = { Text("메인") },
+            )
+
+            NavigationBarItem(
+                selected = pagerState.currentPage == 3,
+                onClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(3)
+                    }
+                },
+                icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+                label = { Text("검색") },
+            )
+
+            NavigationBarItem(
+                selected = pagerState.currentPage == 4,
+                onClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(4)
+                    }
+                },
+                icon = { Icon(Icons.Default.Star, contentDescription = "Bookmark") },
+                label = { Text("북마크") },
+            )
+        }
     }
-
-    NavigationBar {
-      NavigationBarItem(
-        selected = pagerState.currentPage == 1,
-        onClick = {
-          coroutineScope.launch {
-            pagerState.animateScrollToPage(1)
-          }
-        },
-        icon = { Icon(Icons.Default.Home, contentDescription = "Main") },
-        label = { Text("메인") },
-      )
-
-      NavigationBarItem(
-        selected = pagerState.currentPage == 3,
-        onClick = {
-          coroutineScope.launch {
-            pagerState.animateScrollToPage(3)
-          }
-        },
-        icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-        label = { Text("검색") },
-      )
-
-      NavigationBarItem(
-        selected = pagerState.currentPage == 4,
-        onClick = {
-          coroutineScope.launch {
-            pagerState.animateScrollToPage(4)
-          }
-        },
-        icon = { Icon(Icons.Default.Star, contentDescription = "Bookmark") },
-        label = { Text("북마크") },
-      )
-    }
-  }
 }

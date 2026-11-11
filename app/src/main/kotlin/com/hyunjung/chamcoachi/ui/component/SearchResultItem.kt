@@ -30,57 +30,57 @@ import com.hyunjung.chamcoachi.ui.theme.ChamCoachiPurple02
 
 @Composable
 fun SearchResultItem(
-  result: SearchResult,
-  onClick: () -> Unit,
-  modifier: Modifier = Modifier,
+    result: SearchResult,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  Box(
-    modifier = Modifier
-      .fillMaxWidth()
-      .height(1.dp)
-      .background(ChamCoachiGray02),
-  )
-  Row(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(12.dp)
-      .clickable { onClick() },
-    horizontalArrangement = Arrangement.SpaceBetween,
-    verticalAlignment = Alignment.CenterVertically,
-  ) {
-    Row(
-      verticalAlignment = Alignment.CenterVertically,
-    ) {
-      Text(
-        text = "${result.index + 1}단계",
-        style = TextStyle(
-          fontSize = 16.sp,
-          fontWeight = FontWeight(800),
-          color = ChamCoachiPurple02,
-        ),
-      )
-      Spacer(modifier = Modifier.width(4.dp))
-      result.item.arrows.forEach { arrow ->
-        Text(
-          text = arrowSymbol(arrow),
-          style = TextStyle(
-            fontSize = 12.sp,
-            fontWeight = FontWeight(600),
-            color = ChamCoachiGray01,
-          ),
-        )
-      }
-    }
-
-    Icon(
-      painter = painterResource(R.drawable.ic_arrow),
-      contentDescription = null,
-      tint = Color.Unspecified,
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(ChamCoachiGray02),
     )
-  }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp)
+            .clickable { onClick() },
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "${result.index + 1}단계",
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight(800),
+                    color = ChamCoachiPurple02,
+                ),
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            result.item.arrows.forEach { arrow ->
+                Text(
+                    text = arrowSymbol(arrow),
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight(600),
+                        color = ChamCoachiGray01,
+                    ),
+                )
+            }
+        }
+
+        Icon(
+            painter = painterResource(R.drawable.ic_arrow),
+            contentDescription = null,
+            tint = Color.Unspecified,
+        )
+    }
 }
 
 private fun arrowSymbol(arrow: Arrow): String = when (arrow) {
-  Arrow.LEFT -> "1"
-  Arrow.RIGHT -> "2"
+    Arrow.LEFT -> "1"
+    Arrow.RIGHT -> "2"
 }

@@ -43,211 +43,211 @@ import com.hyunjung.chamcoachi.ui.theme.ChamCoachiPurpleText
 
 @Composable
 fun AddBookmarkDialog(
-  currentStep: Int,
-  existingBookmarksCount: Int,
-  onDismiss: () -> Unit,
-  onConfirm: (title: String, color: BookmarkColor) -> Unit,
-  modifier: Modifier = Modifier,
+    currentStep: Int,
+    existingBookmarksCount: Int,
+    onDismiss: () -> Unit,
+    onConfirm: (title: String, color: BookmarkColor) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  var title by remember {
-    mutableStateOf("다마고치 ${existingBookmarksCount + 1}")
-  }
-  var selectedColor by remember { mutableStateOf(BookmarkColor.PINK) }
-
-  Dialog(onDismissRequest = onDismiss) {
-    Card(
-      modifier = modifier
-        .fillMaxWidth()
-        .padding(16.dp),
-      shape = RoundedCornerShape(16.dp),
-      colors = CardDefaults.cardColors(
-        containerColor = Color.White,
-      ),
-      elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-    ) {
-      AddBookmarkDialogContent(
-        currentStep = currentStep,
-        existingBookmarksCount = existingBookmarksCount,
-        onDismiss = onDismiss,
-        onConfirm = onConfirm,
-        title = title,
-        selectedColor = selectedColor,
-        onTitleChange = { title = it },
-        onColorChange = { selectedColor = it },
-      )
+    var title by remember {
+        mutableStateOf("다마고치 ${existingBookmarksCount + 1}")
     }
-  }
+    var selectedColor by remember { mutableStateOf(BookmarkColor.PINK) }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White,
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        ) {
+            AddBookmarkDialogContent(
+                currentStep = currentStep,
+                existingBookmarksCount = existingBookmarksCount,
+                onDismiss = onDismiss,
+                onConfirm = onConfirm,
+                title = title,
+                selectedColor = selectedColor,
+                onTitleChange = { title = it },
+                onColorChange = { selectedColor = it },
+            )
+        }
+    }
 }
 
 @Composable
 private fun AddBookmarkDialogContent(
-  currentStep: Int,
-  existingBookmarksCount: Int,
-  onDismiss: () -> Unit,
-  onConfirm: (title: String, color: BookmarkColor) -> Unit,
-  title: String,
-  selectedColor: BookmarkColor,
-  onTitleChange: (String) -> Unit,
-  onColorChange: (BookmarkColor) -> Unit,
-  modifier: Modifier = Modifier,
+    currentStep: Int,
+    existingBookmarksCount: Int,
+    onDismiss: () -> Unit,
+    onConfirm: (title: String, color: BookmarkColor) -> Unit,
+    title: String,
+    selectedColor: BookmarkColor,
+    onTitleChange: (String) -> Unit,
+    onColorChange: (BookmarkColor) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  Column(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(24.dp),
-    horizontalAlignment = Alignment.CenterHorizontally,
-  ) {
-    Text(
-      text = "북마크 추가",
-      fontSize = 16.sp,
-      fontWeight = FontWeight.Bold,
-      color = ChamCoachiPurple02,
-    )
-
-    Spacer(modifier = Modifier.height(24.dp))
-
-    OutlinedTextField(
-      value = title,
-      onValueChange = onTitleChange,
-      placeholder = { Text("새로운 북마크 이름") },
-      modifier = Modifier.fillMaxWidth(),
-      singleLine = true,
-      shape = RoundedCornerShape(8.dp),
-    )
-
-    Spacer(modifier = Modifier.height(24.dp))
-
-    Text(
-      text = "색상 선택",
-      fontSize = 12.sp,
-      fontWeight = FontWeight.Bold,
-      modifier = Modifier.fillMaxWidth(),
-      color = ChamCoachiGray01,
-    )
-
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Row(
-      modifier = Modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-      ColorOption(
-        color = ChamCoachiPink02,
-        isSelected = selectedColor == BookmarkColor.PINK,
-        onClick = { onColorChange(BookmarkColor.PINK) },
-        label = "분홍",
-      )
-
-      ColorOption(
-        color = ChamCoachiBlue02,
-        isSelected = selectedColor == BookmarkColor.BLUE,
-        onClick = { onColorChange(BookmarkColor.BLUE) },
-        label = "파랑",
-      )
-
-      ColorOption(
-        color = ChamCoachiPurple02,
-        isSelected = selectedColor == BookmarkColor.PURPLE,
-        onClick = { onColorChange(BookmarkColor.PURPLE) },
-        label = "보라",
-      )
-    }
-
-    Spacer(modifier = Modifier.height(24.dp))
-
-    Row(
-      modifier = Modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-      OutlinedButton(
-        onClick = onDismiss,
-        modifier = Modifier.weight(1f),
-        shape = RoundedCornerShape(8.dp),
-      ) {
-        Text(
-          text = "취소",
-          fontSize = 12.sp,
-          color = ChamCoachiGray01,
-        )
-      }
-
-      OutlinedButton(
-        onClick = {
-          onConfirm(
-            title.trim().ifEmpty { "다마고치 ${existingBookmarksCount + 1}" },
-            selectedColor,
-          )
-        },
+    Column(
         modifier = Modifier
-          .weight(1f),
-        shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(1.dp, ChamCoachiPurpleText),
-        colors = ButtonDefaults.outlinedButtonColors(
-          containerColor = ChamCoachiPurple02,
-        ),
-      ) {
+            .fillMaxWidth()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         Text(
-          text = "추가",
-          fontSize = 12.sp,
-          color = Color.White,
+            text = "북마크 추가",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = ChamCoachiPurple02,
         )
-      }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        OutlinedTextField(
+            value = title,
+            onValueChange = onTitleChange,
+            placeholder = { Text("새로운 북마크 이름") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            shape = RoundedCornerShape(8.dp),
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "색상 선택",
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.fillMaxWidth(),
+            color = ChamCoachiGray01,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            ColorOption(
+                color = ChamCoachiPink02,
+                isSelected = selectedColor == BookmarkColor.PINK,
+                onClick = { onColorChange(BookmarkColor.PINK) },
+                label = "분홍",
+            )
+
+            ColorOption(
+                color = ChamCoachiBlue02,
+                isSelected = selectedColor == BookmarkColor.BLUE,
+                onClick = { onColorChange(BookmarkColor.BLUE) },
+                label = "파랑",
+            )
+
+            ColorOption(
+                color = ChamCoachiPurple02,
+                isSelected = selectedColor == BookmarkColor.PURPLE,
+                onClick = { onColorChange(BookmarkColor.PURPLE) },
+                label = "보라",
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            OutlinedButton(
+                onClick = onDismiss,
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Text(
+                    text = "취소",
+                    fontSize = 12.sp,
+                    color = ChamCoachiGray01,
+                )
+            }
+
+            OutlinedButton(
+                onClick = {
+                    onConfirm(
+                        title.trim().ifEmpty { "다마고치 ${existingBookmarksCount + 1}" },
+                        selectedColor,
+                    )
+                },
+                modifier = Modifier
+                    .weight(1f),
+                shape = RoundedCornerShape(8.dp),
+                border = BorderStroke(1.dp, ChamCoachiPurpleText),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = ChamCoachiPurple02,
+                ),
+            ) {
+                Text(
+                    text = "추가",
+                    fontSize = 12.sp,
+                    color = Color.White,
+                )
+            }
+        }
     }
-  }
 }
 
 @Composable
 private fun ColorOption(
-  color: Color,
-  isSelected: Boolean,
-  onClick: () -> Unit,
-  label: String,
-  modifier: Modifier = Modifier,
+    color: Color,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
 ) {
-  Column(
-    horizontalAlignment = Alignment.CenterHorizontally,
-    modifier = modifier.clickable { onClick() },
-  ) {
-    Box {
-      Icon(
-        modifier = Modifier.padding(12.dp),
-        painter = when (label) {
-          "분홍" -> if (isSelected) {
-            painterResource(R.drawable.ic_pink_star_checked)
-          } else {
-            painterResource(R.drawable.ic_star_pink_unbookmarked)
-          }
-          "파랑" -> if (isSelected) {
-            painterResource(R.drawable.ic_blue_star_checked)
-          } else {
-            painterResource(R.drawable.ic_star_blue_unbookmarked)
-          }
-          else -> if (isSelected) {
-            painterResource(R.drawable.ic_purple_star_checked)
-          } else {
-            painterResource(R.drawable.ic_star_purple_unbookmarked)
-          }
-        },
-        contentDescription = null,
-        tint = Color.Unspecified,
-      )
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.clickable { onClick() },
+    ) {
+        Box {
+            Icon(
+                modifier = Modifier.padding(12.dp),
+                painter = when (label) {
+                    "분홍" -> if (isSelected) {
+                        painterResource(R.drawable.ic_pink_star_checked)
+                    } else {
+                        painterResource(R.drawable.ic_star_pink_unbookmarked)
+                    }
+                    "파랑" -> if (isSelected) {
+                        painterResource(R.drawable.ic_blue_star_checked)
+                    } else {
+                        painterResource(R.drawable.ic_star_blue_unbookmarked)
+                    }
+                    else -> if (isSelected) {
+                        painterResource(R.drawable.ic_purple_star_checked)
+                    } else {
+                        painterResource(R.drawable.ic_star_purple_unbookmarked)
+                    }
+                },
+                contentDescription = null,
+                tint = Color.Unspecified,
+            )
+        }
     }
-  }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun AddBookmarkDialogPreview() {
-  ChamCoachiTheme {
-    AddBookmarkDialogContent(
-      currentStep = 4,
-      existingBookmarksCount = 1,
-      onDismiss = {},
-      onConfirm = { _, _ -> },
-      title = "다마고치 2",
-      selectedColor = BookmarkColor.PINK,
-      onTitleChange = {},
-      onColorChange = {},
-    )
-  }
+    ChamCoachiTheme {
+        AddBookmarkDialogContent(
+            currentStep = 4,
+            existingBookmarksCount = 1,
+            onDismiss = {},
+            onConfirm = { _, _ -> },
+            title = "다마고치 2",
+            selectedColor = BookmarkColor.PINK,
+            onTitleChange = {},
+            onColorChange = {},
+        )
+    }
 }

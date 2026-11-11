@@ -31,82 +31,82 @@ const val TOTAL_ITEMS = 18
 
 @Composable
 fun ChamCoachiBottomBar(
-  onToggleSearch: () -> Unit = {},
-  onToggleBookmark: () -> Unit = {},
-  onGoToBookmark: () -> Unit = {},
-  isSearchMode: Boolean = false,
-  isBookmarkMode: Boolean = false,
-  isAtBookmark: Boolean = false,
-  currentIndex: Int = 0,
+    onToggleSearch: () -> Unit = {},
+    onToggleBookmark: () -> Unit = {},
+    onGoToBookmark: () -> Unit = {},
+    isSearchMode: Boolean = false,
+    isBookmarkMode: Boolean = false,
+    isAtBookmark: Boolean = false,
+    currentIndex: Int = 0,
 ) {
-  Row(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(top = 4.dp),
-    horizontalArrangement = Arrangement.spacedBy(70.dp, Alignment.CenterHorizontally),
-    verticalAlignment = Alignment.CenterVertically,
-  ) {
-    Column(
-      modifier = Modifier
-        .clickable(
-          interactionSource = remember { MutableInteractionSource() },
-          indication = null,
-        ) { onToggleSearch() }
-        .padding(vertical = 14.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(70.dp, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-      Box(
+        Column(
+            modifier = Modifier
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) { onToggleSearch() }
+                .padding(vertical = 14.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Box(
 
-        contentAlignment = Alignment.Center,
-      ) {
-        Icon(
-          modifier = Modifier.size(56.dp),
-          painter = painterResource(R.drawable.ic_search_with_text),
-          contentDescription = null,
-          tint = if (isSearchMode) ChamCoachiPurpleText else ChamCoachiGray01,
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    modifier = Modifier.size(56.dp),
+                    painter = painterResource(R.drawable.ic_search_with_text),
+                    contentDescription = null,
+                    tint = if (isSearchMode) ChamCoachiPurpleText else ChamCoachiGray01,
+                )
+            }
+        }
+
+        Text(
+            text = "${currentIndex + 1} | $TOTAL_ITEMS",
+            style = TextStyle(
+                fontSize = 14.sp,
+                lineHeight = 14.sp,
+                fontWeight = FontWeight(700),
+                color = ChamCoachiPurpleText,
+                textAlign = TextAlign.Center,
+            ),
         )
-      }
+
+        Column(
+            modifier = Modifier
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) { onToggleBookmark() }
+                .padding(vertical = 14.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Box(
+
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    modifier = Modifier.size(56.dp),
+                    painter = painterResource(R.drawable.ic_bookmark_with_text),
+                    contentDescription = null,
+                    tint = if (isBookmarkMode) ChamCoachiPurpleText else ChamCoachiGray01,
+                )
+            }
+        }
     }
-
-    Text(
-      text = "${currentIndex + 1} | $TOTAL_ITEMS",
-      style = TextStyle(
-        fontSize = 14.sp,
-        lineHeight = 14.sp,
-        fontWeight = FontWeight(700),
-        color = ChamCoachiPurpleText,
-        textAlign = TextAlign.Center,
-      ),
-    )
-
-    Column(
-      modifier = Modifier
-        .clickable(
-          interactionSource = remember { MutableInteractionSource() },
-          indication = null,
-        ) { onToggleBookmark() }
-        .padding(vertical = 14.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      Box(
-
-        contentAlignment = Alignment.Center,
-      ) {
-        Icon(
-          modifier = Modifier.size(56.dp),
-          painter = painterResource(R.drawable.ic_bookmark_with_text),
-          contentDescription = null,
-          tint = if (isBookmarkMode) ChamCoachiPurpleText else ChamCoachiGray01,
-        )
-      }
-    }
-  }
 }
 
 @Preview
 @Composable
 private fun ChamCoachiBottomBarPreview() {
-  ChamCoachiTheme {
-    ChamCoachiBottomBar()
-  }
+    ChamCoachiTheme {
+        ChamCoachiBottomBar()
+    }
 }

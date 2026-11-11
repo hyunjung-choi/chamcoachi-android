@@ -13,24 +13,24 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomIconButton(
-  onClick: () -> Unit,
-  modifier: Modifier = Modifier,
-  size: Dp = 48.dp,
-  iconSize: Dp = 24.dp,
-  enabled: Boolean = true,
-  content: @Composable () -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    size: Dp = 48.dp,
+    iconSize: Dp = 24.dp,
+    enabled: Boolean = true,
+    content: @Composable () -> Unit,
 ) {
-  Box(
-    modifier = modifier
-      .size(size)
-      .clickable(
-        onClick = onClick,
-        enabled = enabled,
-        interactionSource = remember { MutableInteractionSource() },
-        indication = null,
-      ),
-    contentAlignment = Alignment.Center,
-  ) {
-    content()
-  }
+    Box(
+        modifier = modifier
+            .size(size)
+            .clickable(
+                onClick = onClick,
+                enabled = enabled,
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        content()
+    }
 }
