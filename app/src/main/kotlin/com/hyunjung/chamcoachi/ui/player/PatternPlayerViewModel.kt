@@ -6,47 +6,33 @@ import androidx.lifecycle.viewModelScope
 import com.hyunjung.chamcoachi.data.Arrow
 import com.hyunjung.chamcoachi.data.BookmarkColor
 import com.hyunjung.chamcoachi.data.BookmarkHelper
-import com.hyunjung.chamcoachi.data.BookmarkItem
-import com.hyunjung.chamcoachi.data.PatternItem
 import com.hyunjung.chamcoachi.data.PatternsRepository
 import com.hyunjung.chamcoachi.data.UserPreferences
+import com.hyunjung.chamcoachi.review.ReviewHistoryRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-data class SearchResult(
-    val index: Int,
-    val item: PatternItem,
-)
-
-data class PlayerUiState(
-    val currentIndex: Int = 0,
-    val totalItems: Int = 0,
-    val currentItem: PatternItem? = null,
-
-    // 다중 북마크 관련
-    val bookmarks: List<BookmarkItem> = emptyList(),
-    val maxBookmarks: Int = 3,
-    // 현재 단계의 북마크들
-    val currentStepBookmarks: List<BookmarkItem> = emptyList(),
-
-    // 하위 호환 (기존 UI용)
-    val bookmarkedIndex: Int = 0,
-    val isAtBookmark: Boolean = false,
-
-    // 검색 관련
-    val searchQuery: String = "",
-    val searchResults: List<SearchResult> = emptyList(),
-    val isSearchMode: Boolean = false,
-    val isBookmarkMode: Boolean = false,
-)
-
-class PatternPlayerViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class PatternPlayerViewModel @Inject constructor(
+    application: Application,
+    private val reviewHistoryRepository: ReviewHistoryRepository,
+) : AndroidViewModel(application) {
 
     private val appContext = application.applicationContext
     private val patternSet = PatternsRepository.tamagotchiArrowSet
+
+    private val _reviewRequests = Channel<Unit>(Channel.CONFLATED)
+
+    // 인앱 리뷰 팝업을 띄워야 할 때 한 번 방출
+    val reviewRequests: Flow<Unit> = _reviewRequests.receiveAsFlow()
 
     private val _uiState = MutableStateFlow(
         PlayerUiState(
@@ -82,7 +68,7 @@ class PatternPlayerViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
-    // === 기존 함수들 (하위 호환) ===
+    // === 기존 함수들 ===
 
     fun next() {
         val nextIndex = (_uiState.value.currentIndex + 1).floorMod(_uiState.value.totalItems)
@@ -110,11 +96,10 @@ class PatternPlayerViewModel(application: Application) : AndroidViewModel(applic
 
         viewModelScope.launch {
             if (currentBookmarks.isEmpty()) {
-                // 새 북마크 생성
                 val newBookmark = BookmarkHelper.createBookmark(currentIndex)
                 UserPreferences.addBookmark(appContext, patternSet.id, newBookmark)
             } else {
-                // 첫 번째 북마크 업데이트 (기존 동작 유지)
+                // 첫 번째 북마크 업데이트
                 val updatedBookmark = currentBookmarks.first().copy(stepIndex = currentIndex)
                 UserPreferences.updateBookmark(appContext, patternSet.id, updatedBookmark)
             }
@@ -130,9 +115,6 @@ class PatternPlayerViewModel(application: Application) : AndroidViewModel(applic
 
     // === 새로운 다중 북마크 함수들 ===
 
-    /**
-     * 새 북마크 추가
-     */
     fun addBookmark(title: String = "", color: BookmarkColor = BookmarkColor.PINK) {
         val currentIndex = _uiState.value.currentIndex
         val currentBookmarks = _uiState.value.bookmarks
@@ -148,21 +130,20 @@ class PatternPlayerViewModel(application: Application) : AndroidViewModel(applic
                 color = color,
             )
             UserPreferences.addBookmark(appContext, patternSet.id, newBookmark)
+
+            // 북마크 이름 짓기를 마친 시점에 리뷰 요청
+            if (reviewHistoryRepository.tryConsumeReviewOpportunity()) {
+                _reviewRequests.trySend(Unit)
+            }
         }
     }
 
-    /**
-     * 북마크 삭제
-     */
     fun deleteBookmark(bookmarkId: String) {
         viewModelScope.launch {
             UserPreferences.deleteBookmark(appContext, patternSet.id, bookmarkId)
         }
     }
 
-    /**
-     * 북마크 업데이트
-     */
     fun updateBookmark(bookmarkId: String, title: String? = null, color: BookmarkColor? = null) {
         val bookmark = _uiState.value.bookmarks.find { it.id == bookmarkId } ?: return
 
@@ -176,9 +157,6 @@ class PatternPlayerViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
-    /**
-     * 특정 북마크로 이동
-     */
     fun goToBookmark(bookmarkId: String) {
         val bookmark = _uiState.value.bookmarks.find { it.id == bookmarkId }
         if (bookmark != null) {
@@ -186,16 +164,10 @@ class PatternPlayerViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
-    /**
-     * 현재 단계가 북마크되어 있는지 확인
-     */
     fun isCurrentStepBookmarked(): Boolean {
         return _uiState.value.currentStepBookmarks.isNotEmpty()
     }
 
-    /**
-     * 북마크 추가 가능 여부 확인
-     */
     fun canAddMoreBookmarks(): Boolean {
         return BookmarkHelper.canAddBookmark(_uiState.value.bookmarks, _uiState.value.maxBookmarks)
     }
@@ -218,7 +190,6 @@ class PatternPlayerViewModel(application: Application) : AndroidViewModel(applic
             prev.copy(
                 isBookmarkMode = newBookmarkMode,
                 isSearchMode = false,
-                // 검색 상태도 초기화
                 searchQuery = if (!newBookmarkMode) "" else prev.searchQuery,
                 searchResults = if (!newBookmarkMode) emptyList() else prev.searchResults,
             )

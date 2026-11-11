@@ -66,6 +66,9 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
+    // in-app review
+    implementation(libs.play.review.ktx)
+
     // di
     implementation(libs.hilt.android)
     implementation(libs.androidx.ui.tooling)
